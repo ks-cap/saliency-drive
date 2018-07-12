@@ -36,7 +36,7 @@ public:
   ofVideoPlayer player;
   
   // 出力データ（SPECTRAL_RESIDUAL）
-  ofImage outputOfImg
+  ofImage outputOfImg;
   
   // 顕著性マップ
   Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap_SPECTRAL_RESIDUAL_norm, saliencyMap_SPECTRAL_RESIDUAL_conv;
