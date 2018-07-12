@@ -39,7 +39,7 @@ public:
   ofImage outputOfImg;
   
   // 顕著性マップ
-  Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap_SPECTRAL_RESIDUAL_norm, saliencyMap_SPECTRAL_RESIDUAL_conv;
+  Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap_SPECTRAL_RESIDUAL_norm, saliencyMap_SPECTRAL_RESIDUAL_conv, saliencyMap_SPECTRAL_RESIDUAL_color;
   
   // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
   Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
