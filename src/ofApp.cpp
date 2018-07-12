@@ -3,16 +3,60 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+  // 動画の読み込み
+  ofBackground(255,255,255);
+  ofSetVerticalSync(true);
+  player.load("test.mp4");
+  player.play();
+  
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+  player.update();
+  
+  if(player.isFrameNew()){
+    // 1フレームを取得
+    //    ofPixelsRef pix = player.getPixels();
+    // Mat変換
+    Mat mat = ofxCv::toCv(player).clone();
+    // 白黒加工
+    cvtColor( mat, mat, COLOR_BGR2GRAY );
+    
+    // // 顕著性マップ(SPECTRAL_RESIDUAL)に変換
+    saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat.clone(), saliencyMap_SPECTRAL_RESIDUAL );
 
+    ofLog()<<"saliencyMap_SPECTRAL_RESIDUAL_type : "<< saliencyMap_SPECTRAL_RESIDUAL.type();
+    ofLog()<<"saliencyMap_SPECTRAL_RESIDUAL_at : "<<(int)saliencyMap_SPECTRAL_RESIDUAL.at<uchar>(0,0);
+    
+    // アルファチャンネルの正規化を行う
+    normalize( saliencyMap_SPECTRAL_RESIDUAL.clone(), saliencyMap_SPECTRAL_RESIDUAL_norm, 0.0, 255.0, NORM_MINMAX);
+    ofLog()<<"正規化 : "<<(int)saliencyMap_SPECTRAL_RESIDUAL_norm.at<uchar>(0,0);
+    
+    // Matの型（ビット深度）を変換する
+    saliencyMap_SPECTRAL_RESIDUAL_norm.convertTo( saliencyMap_SPECTRAL_RESIDUAL_conv, CV_8UC3 );
+    ofLog()<<"Matの型 : "<<(double)saliencyMap_SPECTRAL_RESIDUAL_conv.at<double>(0,0);
+    
+    // 動画データ保存用：未実装
+    ofxCv::toOf( saliencyMap_SPECTRAL_RESIDUAL_conv, outputOfImg );
+    
+  }
+  
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+  // 出力（動画）
+  player.draw( 0, 0, 512, 384);
+  
+  // 顕著性マップ(SPECTRAL_RESIDUAL:動画)を出力
+  ofxCv::drawMat(saliencyMap_SPECTRAL_RESIDUAL_conv, 512, 0, 512, 384);
+  
+//  outputOfImg.save("output");
+  
+  // FPS表示
+  ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 20, 20);
 }
 
 //--------------------------------------------------------------
