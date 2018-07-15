@@ -2,6 +2,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+  
+  // 画像の読み込み
+  inputOfImg.load("cat.jpeg");
+  inputOfImg.update();
+  
+  image = ofxCv::toCv( inputOfImg );
+  resize( image, image, cv::Size(), 0.3, 0.3 );
+  ofxCv::toOf( image, outputOfImg );
+  outputOfImg.update();
   // 動画の読み込み
   ofBackground( 255,255,255 );
   ofSetVerticalSync( true );
@@ -39,17 +48,21 @@ void ofApp::update(){
     applyColorMap( saliencyMap_SPECTRAL_RESIDUAL_conv.clone(), saliencyMap_SPECTRAL_RESIDUAL_color, COLORMAP_JET );
     
     // 動画データ保存用：未実装
-//    ofxCv::toOf( saliencyMap_SPECTRAL_RESIDUAL_color, outputOfImg );
+//    ofxCv::toOf( saliencyMap_SPECTRAL_RESIDUAL_color, outputOfImg_SPECTRAL_RESIDUAL );
     
     // データの各画素にアクセス
-//    for( int y = 0; y < saliencyMap_SPECTRAL_RESIDUAL_conv.rows; ++y ){
-//      for( int x = 0; x < saliencyMap_SPECTRAL_RESIDUAL_conv.cols; ++x ){
-//        // 画像のチャネル数分だけループ。白黒の場合は1回、カラーの場合は3回
-//        for( int c = 0; c < saliencyMap_SPECTRAL_RESIDUAL_conv.channels(); ++c ){
+    ofLog()<<"x : "<<saliencyMap_SPECTRAL_RESIDUAL_conv.cols;
+    ofLog()<<"y : "<<saliencyMap_SPECTRAL_RESIDUAL_conv.rows;
+    
+    for( int y = 0; y < saliencyMap_SPECTRAL_RESIDUAL_conv.rows; ++y ){
+      for( int x = 0; x < saliencyMap_SPECTRAL_RESIDUAL_conv.cols; ++x ){
+        // 画像のチャネル数分だけループ。白黒の場合は1回、カラーの場合は3回
+        for( int c = 0; c < saliencyMap_SPECTRAL_RESIDUAL_conv.channels(); ++c ){
 //          (int)saliencyMap_SPECTRAL_RESIDUAL_conv.at<uchar>( x, y );
-//        }
-//      }
-//    }
+          
+        }
+      }
+    }
 
   }
   
@@ -67,8 +80,10 @@ void ofApp::draw(){
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
   ofxCv::drawMat( saliencyMap_SPECTRAL_RESIDUAL_color, 512, 384, 512, 384 );
   
+  outputOfImg.draw( 200, 300 );
+  
   // FPS表示
-  ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
+  ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 900, 20 );
 }
 
 //--------------------------------------------------------------
