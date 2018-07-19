@@ -34,15 +34,21 @@ public:
   
   // 画像
   ofImage inputOfImg;
+  // UI
+  Mat image;
   // 動画
   ofVideoPlayer player;
+  
+  // cvMinMaxLocで使用
+  CvPoint min_loc, max_loc;
+  double min_val, max_val;
   
   // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
   ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
   // 顕著性マップ
-  Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap_SPECTRAL_RESIDUAL_norm, saliencyMap_SPECTRAL_RESIDUAL_conv, saliencyMap_SPECTRAL_RESIDUAL_color;
-  Mat image;
+  Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
+
   // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
   Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
-  
+
 };
