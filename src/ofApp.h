@@ -7,6 +7,7 @@
 #include "saliencySpecializedClasses.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/core.hpp"
+#include "opencv2/imgproc.hpp"
 #include "iostream"
 
 using namespace std;
@@ -39,8 +40,8 @@ public:
   // 動画
   ofVideoPlayer player;
   
-  // cvMinMaxLocで使用
-  CvPoint min_loc, max_loc;
+  // minMaxLocで使用
+  cv::Point min_loc, max_loc;
   double min_val, max_val;
   
   // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
