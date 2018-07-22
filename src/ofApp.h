@@ -52,4 +52,9 @@ public:
   // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
   Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
 
+  ofVideoGrabber vidGrabber;
+  ofPixels videoInverted;
+//  ofTexture videoTexture;
+  int camWidth;
+  int camHeight;
 };
