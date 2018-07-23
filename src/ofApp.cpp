@@ -51,19 +51,16 @@ void ofApp::update(){
 //    ofLog()<<"min_location[x] : "<<min_loc.x;
 //    ofLog()<<"min_location[y] : "<<min_loc.y;
     
-    for( int y = 0; y < saliencyMap_conv.rows; ++y ){
-      for( int x = 0; x < saliencyMap_conv.cols; ++x ){
-          // 画素に直接アクセス
-//          ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
+    // 画素値の反転
+    for( int y = 0; y < saliencyMap_conv.cols; ++y ){
+      for( int x = 0; x < saliencyMap_conv.rows; ++x ){
           saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
-//           ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
       }
     }
-    
     // 疑似カラー（カラーマップ）変換
     applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, COLORMAP_JET );
-    
   }
+  
 }
 
 //--------------------------------------------------------------
