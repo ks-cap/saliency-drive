@@ -46,18 +46,19 @@ void ofApp::update(){
     // 最小と最大の要素値とそれらの位置を求める
     minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
     
-//    ofLog()<<"max_location[x] : "<<max_loc.x;
-//    ofLog()<<"max_location[y] : "<<max_loc.y;
-//    ofLog()<<"min_location[x] : "<<min_loc.x;
-//    ofLog()<<"min_location[y] : "<<min_loc.y;
+    //    ofLog()<<"max_location[x] : "<<max_loc.x;
+    //    ofLog()<<"max_location[y] : "<<max_loc.y;
+    //    ofLog()<<"min_location[x] : "<<min_loc.x;
+    //    ofLog()<<"min_location[y] : "<<min_loc.y;
     
-    // 画素値の反転
+    // 画素値の反転(現状 : 0:黒:顕著性が低い, 255:白:顕著性が高い)
     for( int y = 0; y < saliencyMap_conv.cols; ++y ){
       for( int x = 0; x < saliencyMap_conv.rows; ++x ){
-          saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
+        saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
+//        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
       }
     }
-    // 疑似カラー（カラーマップ）変換
+    // 疑似カラー（カラーマップ）変換 : (0:赤:顕著性が高い, 255:青:顕著性が低い)
     applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, COLORMAP_JET );
   }
   
@@ -66,12 +67,12 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
   
-//  // 出力（動画）
-//  player.draw( 0, 0, 640, 360 );
-//  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-//  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-//  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-//  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+  //  // 出力（動画）
+  //  player.draw( 0, 0, 640, 360 );
+  //  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+  //  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
+  //  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+  //  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
   
   //--------------------------------------------------------------
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
@@ -82,7 +83,7 @@ void ofApp::draw(){
   // UI画像
   outputOfImg.draw( min_loc.x, min_loc.y );
   // FPS表示
-//  ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
+  //  ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
   
 }
 
