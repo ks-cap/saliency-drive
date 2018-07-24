@@ -42,6 +42,7 @@ public:
   
   // minMaxLocで使用
   cv::Point min_loc, max_loc;
+  
   double min_val, max_val;
   
   // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
@@ -51,5 +52,9 @@ public:
 
   // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
   Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
-
+  
+  int widthMin = 0;
+  int heightMin = 0;
+  bool firstFrameCheck = true;
+  bool algorithmCheck = true;
 };
