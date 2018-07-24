@@ -53,8 +53,11 @@ public:
   // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
   Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
   
+  // 10*10の顕著マップの最小値の場所
   int widthMin = 0;
   int heightMin = 0;
+  // 2回目以降の条件を分けるため
   bool firstFrameCheck = true;
+  // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
   bool algorithmCheck = true;
 };

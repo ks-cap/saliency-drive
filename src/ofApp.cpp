@@ -1,5 +1,5 @@
 #include "ofApp.h"
-
+#define SALIENCY 150000
 //--------------------------------------------------------------
 void ofApp::setup(){
   
@@ -60,7 +60,8 @@ void ofApp::update(){
     //    ofLog()<<"saliencyMap_conv.rows/10 : "<<saliencyMap_conv.rows/10;
     //    ofLog()<<"saliencyMap_conv.cols/10 : "<<saliencyMap_conv.cols/10;
     
-    if(firstFrameCheck == false){
+    // updateが2回目以降の場合, if文の中に入る
+    if(!firstFrameCheck){
       // 前回の顕著性マップで顕著性が低かった10*10ピクセルのうちの一つ
       cv::Rect roi(widthMin, heightMin, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
       Mat saliency_roi = saliencyMap_conv(roi);
@@ -72,49 +73,50 @@ void ofApp::update(){
         }
       }
       
-      if(pixels < 150000) {
+      // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
+      if(pixels < SALIENCY) {
         algorithmCheck = false;
       }else {
         algorithmCheck = true;
       }
     }
     
+    // 10*10のうちの画素最小値の場所を取得
     if (algorithmCheck == true){
       for( int h = 0; h < 10; ++h ){
         int width = 0;
         for( int w = 0; w < 10; ++w ){
           cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
           Mat saliency_roi = saliencyMap_conv(roi);
-          //        ofLog()<<"ROI作成";
           
+          // 10*10のうちの一つの画素値
           int pixels = 0;
-          // 10 * 10のうちの一つの画素値
           for( int y = 0; y < saliency_roi.cols; ++y ){
             for( int x = 0; x < saliency_roi.rows; ++x ){
               pixels += (int)saliency_roi.at<uchar>( x, y );
             }
           }
           
-          //        ofLog()<<"w : "<<w<<"h : "<<h;
-          //        ofLog()<<"minPixels(Before) : "<<minPixels;
-          //        ofLog()<<"pixels : "<<pixels;
-          //        ofLog()<<"------------------------";
+//          ofLog()<<"w : "<<w<<"h : "<<h;
+//          ofLog()<<"minPixels(Before) : "<<minPixels;
+//          ofLog()<<"pixels : "<<pixels;
+//          ofLog()<<"------------------------";
           
           if ( (h == 0 && w == 0) || pixels < minPixels ) {
             minPixels = pixels;
             widthMin = width;
             heightMin = height;
-            //          ofLog()<<"minPixels(After) : "<<minPixels;
-            //          ofLog()<<"widthMin : "<<widthMin;
-            //          ofLog()<<"heightMin : "<<heightMin;
-            //          ofLog()<<"------------------------";
+//            ofLog()<<"minPixels(After) : "<<minPixels;
+//            ofLog()<<"widthMin : "<<widthMin;
+//            ofLog()<<"heightMin : "<<heightMin;
+//            ofLog()<<"------------------------";
             
           }
           width += saliencyMap_conv.cols / 10;
           
-          //        ofLog()<<"width : "<<width;
-          //        ofLog()<<"height : "<<height;
-          //        ofLog()<<"------------------------";
+//          ofLog()<<"width : "<<width;
+//          ofLog()<<"height : "<<height;
+//          ofLog()<<"------------------------";
         }
         height += saliencyMap_conv.rows / 10;
       }
@@ -125,11 +127,12 @@ void ofApp::update(){
     for( int y = 0; y < saliencyMap_conv.cols; ++y ){
       for( int x = 0; x < saliencyMap_conv.rows; ++x ){
         saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
-        //        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
+//        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
       }
     }
     // 疑似カラー（カラーマップ）変換 : (0:赤:顕著性が高い, 255:青:顕著性が低い)
     applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, COLORMAP_JET );
+    // 初回のチェックをなくす
     firstFrameCheck = false;
   }
   
