@@ -1,5 +1,7 @@
 #include "ofApp.h"
-#define SALIENCY 150000
+
+#define SALIENCY 100000
+
 //--------------------------------------------------------------
 void ofApp::setup(){
   
@@ -21,9 +23,9 @@ void ofApp::setup(){
   // カメラの設定
   camWidth = 1280;
   camHeight = 720;
-  
+
   vector<ofVideoDevice> devices = vidGrabber.listDevices();
-  
+
   for(size_t i = 0; i < devices.size(); i++){
     if(devices[i].bAvailable){
       ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
@@ -31,7 +33,7 @@ void ofApp::setup(){
       ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
     }
   }
-  
+
   vidGrabber.setDeviceID(0);
   vidGrabber.setDesiredFrameRate(60);
   vidGrabber.initGrabber(camWidth, camHeight);
@@ -56,13 +58,14 @@ void ofApp::update(){
   
   ofBackground(100, 100, 100);
   vidGrabber.update();
-  
+
   if( vidGrabber.isFrameNew() ){
     ofPixels & pixels = vidGrabber.getPixels();
 
     Mat mat, mat_gray;
     // Mat変換
     mat = ofxCv::toCv( pixels ).clone();
+//    mat = ofxCv::toCv( player ).clone();
     // 白黒加工
     cvtColor( mat.clone(), mat_gray, COLOR_BGR2GRAY );
 
