@@ -74,18 +74,15 @@ void ofApp::update(){
       }
       
       // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
-      if(pixels < SALIENCY) {
-        algorithmCheck = false;
-      }else {
-        algorithmCheck = true;
-      }
+      algorithmCheck = pixels < SALIENCY ? false : true ;
+      
     }
     
     // 10*10のうちの画素最小値の場所を取得
     if (algorithmCheck == true){
-      for( int h = 0; h < 10; ++h ){
+      for( int heightCount = 0; heightCount < 10; ++heightCount ){
         int width = 0;
-        for( int w = 0; w < 10; ++w ){
+        for( int widthCount = 0; widthCount < 10; ++widthCount ){
           cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
           Mat saliency_roi = saliencyMap_conv(roi);
           
@@ -102,7 +99,7 @@ void ofApp::update(){
 //          ofLog()<<"pixels : "<<pixels;
 //          ofLog()<<"------------------------";
           
-          if ( (h == 0 && w == 0) || pixels < minPixels ) {
+          if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
             minPixels = pixels;
             widthMin = width;
             heightMin = height;
@@ -121,7 +118,6 @@ void ofApp::update(){
         height += saliencyMap_conv.rows / 10;
       }
     }
-    //    ofLog()<<"forを抜ける";
     
     // 画素値の反転(現状 : 0:黒:顕著性が低い, 255:白:顕著性が高い)
     for( int y = 0; y < saliencyMap_conv.cols; ++y ){
