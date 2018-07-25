@@ -93,12 +93,12 @@ void ofApp::update(){
       
     }
     
-    // 処理領域を設定
-    int height = 0;
-    int minPixels = 0;
-    
     // 10*10のうちの画素最小値の場所を取得
     if ( algorithmCheck ){
+      // 処理領域を設定
+      int height = 0;
+      int minPixels = 0;
+      
       for( int heightCount = 0; heightCount < 10; ++heightCount ){
         int width = 0;
         for( int widthCount = 0; widthCount < 10; ++widthCount ){
