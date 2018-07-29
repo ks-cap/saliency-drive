@@ -1,44 +1,10 @@
 #include "ofApp.h"
 
-#define SALIENCY 100000
+// UIの位置を変更する画素値の条件
+#define SALIENCY 300000
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-  
-  // 画像の読み込み
-  inputOfImg.load("cat.jpeg");
-  inputOfImg.update();
-
-  image = ofxCv::toCv( inputOfImg );
-  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.cols );
-  ofxCv::toOf( image, outputOfImg );
-  outputOfImg.update();
-
-  // 動画の読み込み
-//  ofBackground( 255,255,255 );
-//  ofSetVerticalSync( true );
-//  player.load( "test.mp4" );
-//  player.play();
-  
-  // カメラの設定
-  camWidth = 1280;
-  camHeight = 720;
-
-  vector<ofVideoDevice> devices = vidGrabber.listDevices();
-
-  for(size_t i = 0; i < devices.size(); i++){
-    if(devices[i].bAvailable){
-      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
-    }else{
-      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
-    }
-  }
-
-  vidGrabber.setDeviceID(0);
-  vidGrabber.setDesiredFrameRate(60);
-  vidGrabber.initGrabber(camWidth, camHeight);
-
-  ofSetVerticalSync(true);
   
   // 10*10の顕著マップの最小値の場所
   widthMin = 0;
@@ -48,27 +14,67 @@ void ofApp::setup(){
   firstFrameCheck = true;
   // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
   algorithmCheck = true;
+  
+  //--------------------   Picture   ----------------------------
+  // 画像の読み込み
+  inputOfImg.load("cat.jpeg");
+  inputOfImg.update();
+  
+  image = ofxCv::toCv( inputOfImg );
+  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
+  ofxCv::toOf( image, outputOfImg );
+  outputOfImg.update();
+  
+  //---------------------   Movie   -----------------------------
+  // 動画の読み込み
+    ofBackground( 255,255,255 );
+    ofSetVerticalSync( true );
+    player.load( "test.mp4" );
+    player.play();
+  
+  //---------------------   Camera   -----------------------------
+  // カメラの設定
+//  camWidth = 1280;
+//  camHeight = 720;
+//
+//  vector<ofVideoDevice> devices = vidGrabber.listDevices();
+//
+//  for(size_t i = 0; i < devices.size(); i++){
+//    if(devices[i].bAvailable){
+//      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
+//    }else{
+//      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
+//    }
+//  }
+//
+//  vidGrabber.setDeviceID(0);
+//  vidGrabber.setDesiredFrameRate(60);
+//  vidGrabber.initGrabber(camWidth, camHeight);
+//
+//  ofSetVerticalSync(true);
+  
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+  // 動画の場合
+    player.update();
+    if(player.isFrameNew()){
   
-//  player.update();
-//  if(player.isFrameNew()){
+  // カメラの場合
+//  ofBackground(100, 100, 100);
+//  vidGrabber.update();
   
-  ofBackground(100, 100, 100);
-  vidGrabber.update();
-
-  if( vidGrabber.isFrameNew() ){
-    ofPixels & pixels = vidGrabber.getPixels();
-
+//  if( vidGrabber.isFrameNew() ){
+//    ofPixels & pixels = vidGrabber.getPixels();
+    
     Mat mat, mat_gray;
     // Mat変換
-    mat = ofxCv::toCv( pixels ).clone();
-//    mat = ofxCv::toCv( player ).clone();
+//    mat = ofxCv::toCv( pixels ).clone();
+        mat = ofxCv::toCv( player ).clone();
     // 白黒加工
     cvtColor( mat.clone(), mat_gray, COLOR_BGR2GRAY );
-
+    
     // 顕著性マップ(SPECTRAL_RESIDUAL)に変換
     saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliencyMap );
     // アルファチャンネルの正規化を行う
@@ -77,7 +83,7 @@ void ofApp::update(){
     saliencyMap_norm.convertTo( saliencyMap_conv, CV_8UC3 );
     
     // 最小と最大の要素値とそれらの位置を求める
-//    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
+    //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
     
     // updateが2回目以降の場合, if文の中に入る
     if(!firstFrameCheck){
@@ -105,26 +111,29 @@ void ofApp::update(){
       for( int heightCount = 0; heightCount < 10; ++heightCount ){
         int width = 0;
         for( int widthCount = 0; widthCount < 10; ++widthCount ){
-          cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
-          Mat saliency_roi = saliencyMap_conv(roi);
-          
-          // 10*10のうちの一つの画素値
-          int pixels = 0;
-          for( int y = 0; y < saliency_roi.cols; ++y ){
-            for( int x = 0; x < saliency_roi.rows; ++x ){
-              pixels += (int)saliency_roi.at<uchar>( x, y );
+          // 道路にUIを出さないよう条件分岐
+          if ( heightCount<4 || ( heightCount>=4 && ( widthCount<2 || widthCount>8 ) ) ) {
+            cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
+            Mat saliency_roi = saliencyMap_conv(roi);
+            
+            // 10*10のうちの一つの画素値
+            int pixels = 0;
+            for( int y = 0; y < saliency_roi.cols; ++y ){
+              for( int x = 0; x < saliency_roi.rows; ++x ){
+                pixels += (int)saliency_roi.at<uchar>( x, y );
+              }
+            }
+            
+            // 最小値の値とその場所を更新
+            if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
+              minPixels = pixels;
+              widthMin = width;
+              heightMin = height;
+              
             }
           }
           
-          // 最小値の値とその場所を更新
-          if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
-            minPixels = pixels;
-            widthMin = width;
-            heightMin = height;
-            
-          }
           width += saliencyMap_conv.cols / 10;
-
         }
         height += saliencyMap_conv.rows / 10;
       }
@@ -134,14 +143,14 @@ void ofApp::update(){
     for( int y = 0; y < saliencyMap_conv.cols; ++y ){
       for( int x = 0; x < saliencyMap_conv.rows; ++x ){
         saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
-//        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
+        //        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
       }
     }
     // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
     applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, COLORMAP_JET );
     // 初回のチェックをなくす
     firstFrameCheck = false;
-
+    
   }
   
 }
@@ -149,16 +158,16 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
   
-//  // 出力（動画）
-//  player.draw( 0, 0, 640, 360 );
-//  // 出力（カメラ）
-//  ofSetHexColor(0xffffff);
-//  vidGrabber.draw(0, 0, 640, 360);
-//  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-//  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-//  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-//  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
-
+  //  // 出力（動画）
+  //  player.draw( 0, 0, 640, 360 );
+  //  // 出力（カメラ）
+  //  ofSetHexColor(0xffffff);
+  //  vidGrabber.draw(0, 0, 640, 360);
+  //  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+  //  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
+  //  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+  //  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+  
   //--------------------------------------------------------------
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
   ofxCv::drawMat( saliencyMap_color, 0, 0 );
@@ -167,6 +176,7 @@ void ofApp::draw(){
   
   // UI画像
   outputOfImg.draw( widthMin, heightMin );
+  ofLog()<<"場所"<<widthMin<<":"<<heightMin;
   // FPS表示
   ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
   
@@ -174,7 +184,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+  
 }
 
 //--------------------------------------------------------------
