@@ -17,7 +17,7 @@ void ofApp::setup(){
   
   //--------------------   Picture   ----------------------------
   // 画像の読み込み
-  inputOfImg.load("roadSign_1.png");
+  inputOfImg.load("roadSign_speed.png");
   inputOfImg.update();
   
   image = ofxCv::toCv( inputOfImg );
@@ -184,7 +184,40 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+  switch (key) {
+    // "1"を押した時
+    case 49:
+      inputOfImg.load("roadSign_speed.png");
+      break;
+    // "2"を押した時
+    case 50:
+      inputOfImg.load("roadSign_stop.png");
+      break;
+    // "3"を押した時
+    case 51:
+      inputOfImg.load("roadSign_walk.png");
+      break;
+    // "4"を押した時
+    case 52:
+      player.load("test_night.mp4");
+      break;
+    // "5"を押した時
+    case 53:
+      player.load("test.mp4");
+      break;
+    // 上記以外のボタンを押した時
+    default:
+      inputOfImg.load("cat.jpeg");
+      break;
+  }
   
+  inputOfImg.update();
+  image = ofxCv::toCv( inputOfImg );
+  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
+  ofxCv::toOf( image, outputOfImg );
+  outputOfImg.update();
+  
+  player.play();
 }
 
 //--------------------------------------------------------------
