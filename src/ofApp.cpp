@@ -17,7 +17,7 @@ void ofApp::setup(){
   
   //--------------------   Picture   ----------------------------
   // 画像の読み込み
-  inputOfImg.load("cat.jpeg");
+  inputOfImg.load("roadSign_1.png");
   inputOfImg.update();
   
   image = ofxCv::toCv( inputOfImg );
@@ -29,7 +29,7 @@ void ofApp::setup(){
   // 動画の読み込み
     ofBackground( 255,255,255 );
     ofSetVerticalSync( true );
-    player.load( "test.mp4" );
+    player.load("test_night.mp4");
     player.play();
   
   //---------------------   Camera   -----------------------------
@@ -64,14 +64,14 @@ void ofApp::update(){
   // カメラの場合
 //  ofBackground(100, 100, 100);
 //  vidGrabber.update();
-  
+//
 //  if( vidGrabber.isFrameNew() ){
 //    ofPixels & pixels = vidGrabber.getPixels();
     
     Mat mat, mat_gray;
     // Mat変換
 //    mat = ofxCv::toCv( pixels ).clone();
-        mat = ofxCv::toCv( player ).clone();
+    mat = ofxCv::toCv( player ).clone();
     // 白黒加工
     cvtColor( mat.clone(), mat_gray, COLOR_BGR2GRAY );
     
@@ -158,25 +158,25 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
   
-  //  // 出力（動画）
-  //  player.draw( 0, 0, 640, 360 );
-  //  // 出力（カメラ）
+  // 出力（動画）
+    player.draw( 0, 0 );
+  // 出力（カメラ）
   //  ofSetHexColor(0xffffff);
   //  vidGrabber.draw(0, 0, 640, 360);
-  //  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
   //  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-  //  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
   //  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
   
   //--------------------------------------------------------------
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-  ofxCv::drawMat( saliencyMap_color, 0, 0 );
+//  ofxCv::drawMat( saliencyMap_color, 0, 0 );
   
   //--------------------------------------------------------------
   
   // UI画像
   outputOfImg.draw( widthMin, heightMin );
-  ofLog()<<"場所"<<widthMin<<":"<<heightMin;
+
   // FPS表示
   ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
   
