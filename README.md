@@ -1,5 +1,5 @@
 # saliency-drive
-顕著性マップを生成
+Saliency Map
 
 # Requirements
 * C++
