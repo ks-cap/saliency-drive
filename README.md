@@ -9,8 +9,8 @@
 
 # Usage
 `
-#include "ofMain.h"　　
-#include "ofxOpenCv.h"　　
+#include "ofMain.h"  
+#include "ofxOpenCv.h"  
 #include "ofxCv.h"  
 #include "ofxGui.h"  
 #include "saliencySpecializedClasses.hpp"  
