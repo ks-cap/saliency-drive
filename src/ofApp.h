@@ -21,6 +21,11 @@ public:
   void update();
   void draw();
   
+  Mat saliencyAlgorithm(Mat mat);
+  
+  bool positionUI(bool checkUI);
+  void algorithmMinPixels(bool checkPixels);
+  
   void keyPressed(int key);
   void keyReleased(int key);
   void mouseMoved(int x, int y );
