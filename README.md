@@ -1,11 +1,9 @@
 # saliency-drive
 顕著性マップを生成
 
-# Dependency
+# Requirements
 * C++
-* ofxOpenCv
-* ofxCv
-* ofxGui
+* ofxOpenCv(+conrtib)/ofxCv/ofxGui
 
 # Usage
 #### ofApp.h
