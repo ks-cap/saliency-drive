@@ -3,7 +3,7 @@
 
 # Requirements
 * C++
-* ofxOpenCv(+conrtib)/ofxCv/ofxGui
+* ofxOpenCv(+conrtib) / ofxCv / ofxGui
 
 # Usage
 #### ofApp.h
