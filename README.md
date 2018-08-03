@@ -27,4 +27,6 @@ Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = Static
 #### ofApp.cpp
 ```
 saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliencyMap );
+normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, NORM_MINMAX );
+saliencyMap_norm.convertTo( saliencyMap_conv, CV_8UC3 );
 ```
