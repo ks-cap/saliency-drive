@@ -19,3 +19,11 @@
 #include "opencv2/imgproc.hpp"  
 #include "iostream"
 ```
+
+```swift
+Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
+```
+
+```
+saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliencyMap );
+```
