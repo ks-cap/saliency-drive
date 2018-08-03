@@ -8,7 +8,7 @@
 * ofxGui
 
 # Usage
-`
+```
 #include "ofMain.h"  
 #include "ofxOpenCv.h"  
 #include "ofxCv.h"  
@@ -18,4 +18,4 @@
 #include "opencv2/core/core.hpp"  
 #include "opencv2/imgproc.hpp"  
 #include "iostream"
-`
+```
