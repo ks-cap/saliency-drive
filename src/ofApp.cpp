@@ -17,6 +17,8 @@ void ofApp::setup(){
   // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
   algorithmCheck = true;
   
+  imgDraw = false;
+  
   //--------------------   Picture   ----------------------------
   // 画像の読み込み
   inputOfImg.load("roadSign_speed.png");
@@ -115,8 +117,9 @@ void ofApp::draw(){
   //--------------------------------------------------------------
   
   // UI画像
-  outputOfImg.draw( widthMin, heightMin );
-
+  if ( imgDraw ){
+    outputOfImg.draw( widthMin, heightMin );
+  }
   // FPS表示
   ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
   
@@ -206,26 +209,31 @@ void ofApp::keyPressed(int key){
     // "1"を押した時
     case 49:
       inputOfImg.load("roadSign_speed.png");
+      imgDraw = true;
       break;
     // "2"を押した時
     case 50:
       inputOfImg.load("roadSign_stop.png");
+      imgDraw = true;
       break;
     // "3"を押した時
     case 51:
       inputOfImg.load("roadSign_walk.png");
+      imgDraw = true;
       break;
     // "4"を押した時
     case 52:
       player.load("test_night.mp4");
+      imgDraw = true;
       break;
     // "5"を押した時
     case 53:
       player.load("test.mp4");
+      imgDraw = true;
       break;
     // 上記以外のボタンを押した時
     default:
-      inputOfImg.load("cat.jpeg");
+      imgDraw = false;
       break;
   }
   

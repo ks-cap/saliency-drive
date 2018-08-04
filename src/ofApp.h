@@ -69,4 +69,6 @@ public:
   // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
   bool algorithmCheck;
   
+  bool imgDraw;
+  
 };
