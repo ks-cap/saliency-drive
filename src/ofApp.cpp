@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 // UIの位置を変更する画素値の条件
-#define SALIENCY 300000
+#define SALIENCY 100000
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -18,62 +18,68 @@ void ofApp::setup(){
   algorithmCheck = true;
   
   imgDraw = false;
+  mapDraw = false;
   
-  //--------------------   Picture   ----------------------------
+  //---------------------   Picture   ----------------------------
   // 画像の読み込み
-  inputOfImg.load("roadSign_speed.png");
-  inputOfImg.update();
+//  inputOfImg.load("roadSign_speed.png");
+//  inputOfImg.update();
+//
+//  image = ofxCv::toCv( inputOfImg );
+//  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
+//  ofxCv::toOf( image, outputOfImg );
+//  outputOfImg.update();
   
-  image = ofxCv::toCv( inputOfImg );
-  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
-  ofxCv::toOf( image, outputOfImg );
-  outputOfImg.update();
-  
-  //---------------------   Movie   -----------------------------
+  //----------------------   Movie   -----------------------------
   // 動画の読み込み
-    ofSetVerticalSync( true );
-    player.load("test_night.mp4");
-    player.play();
+  ofSetVerticalSync(true);
+  player.load("driver_daytime.mp4");
+  player.play();
   
   //---------------------   Camera   -----------------------------
   // カメラの設定
-//  camWidth = 1280;
-//  camHeight = 720;
-//
-//  vector<ofVideoDevice> devices = vidGrabber.listDevices();
-//
-//  for(size_t i = 0; i < devices.size(); i++){
-//    if(devices[i].bAvailable){
-//      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
-//    }else{
-//      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
-//    }
-//  }
-//
-//  vidGrabber.setDeviceID(0);
-//  vidGrabber.setDesiredFrameRate(60);
-//  vidGrabber.initGrabber(camWidth, camHeight);
-//
-//  ofSetVerticalSync(true);
+  //  camWidth = 1280;
+  //  camHeight = 720;
+  //
+  //  vector<ofVideoDevice> devices = vidGrabber.listDevices();
+  //
+  //  for(size_t i = 0; i < devices.size(); i++){
+  //    if(devices[i].bAvailable){
+  //      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
+  //    }else{
+  //      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
+  //    }
+  //  }
+  //
+  //  vidGrabber.setDeviceID(0);
+  //  vidGrabber.setDesiredFrameRate(60);
+  //  vidGrabber.initGrabber(camWidth, camHeight);
+  //
+  //  ofSetVerticalSync(true);
   
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
   // 動画の場合
-    player.update();
-    if(player.isFrameNew()){
+  player.update();
   
-  // カメラの場合
-//  vidGrabber.update();
-//
-//  if( vidGrabber.isFrameNew() ){
-//    ofPixels & pixels = vidGrabber.getPixels();
+  if (mapDraw) {
+    player_map.update();
+  }
   
-  // Mat変換
-//    saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
+  if(player.isFrameNew()){
+    
+    // カメラの場合
+    //  vidGrabber.update();
+    //
+    //  if( vidGrabber.isFrameNew() ){
+    //    ofPixels & pixels = vidGrabber.getPixels();
+    
+    // Mat変換
+    //    saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
     saliencyAlgorithm(ofxCv::toCv( player ));
-  
+    
     // 最小と最大の要素値とそれらの位置を求める
     //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
     
@@ -87,7 +93,7 @@ void ofApp::update(){
     for( int y = 0; y < saliencyMap_conv.cols; ++y ){
       for( int x = 0; x < saliencyMap_conv.rows; ++x ){
         saliencyMap_conv.at<uchar>( x, y ) = 255 - (int)saliencyMap_conv.at<uchar>( x, y );
-//        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
+        //        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
       }
     }
     // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
@@ -101,25 +107,40 @@ void ofApp::update(){
 void ofApp::draw(){
   
   // 出力（動画）
-  player.draw( 0, 0 );
+    player.draw( 0, 0 );
   // 出力（カメラ）
-//    ofSetHexColor(0xffffff);
-//    vidGrabber.draw(0, 0, 640, 360 );
-  // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-//  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-//  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+  //    ofSetHexColor(0xffffff);
+  //    vidGrabber.draw(0, 0, 640, 360 );
+  //   顕著性マップ(SPECTRAL_RESIDUAL)を出力
+  //  ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
+  //   顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+  //  ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
   
   //--------------------------------------------------------------
-  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-//  ofxCv::drawMat( saliencyMap_color, 0, 0 );
-  
+  // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
+//    ofxCv::drawMat( saliencyMap_color, 0, 0 );
   //--------------------------------------------------------------
   
   // UI画像
   if ( imgDraw ){
     outputOfImg.draw( widthMin, heightMin );
   }
+  if ( mapDraw ){
+    // マップ表示が小さいため倍のサイズにしている
+    int mapWidth, mapHeight;
+    if(widthMin == 1152) {
+      mapWidth = 1024;
+    }else {
+      mapWidth = widthMin;
+    }
+    if(heightMin == 648){
+      mapHeight = 576;
+    }else {
+      mapHeight = heightMin;
+    }
+    player_map.draw(mapWidth, mapHeight, 256, 144);
+  }
+  
   // FPS表示
   ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
   
@@ -206,44 +227,70 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   switch (key) {
-    // "1"を押した時
+      // "1"を押した時 道路の標識（速度制限）表示
     case 49:
       inputOfImg.load("roadSign_speed.png");
       imgDraw = true;
+      mapDraw = false;
       break;
-    // "2"を押した時
+      // "2"を押した時 道路の標識（停止）表示
     case 50:
       inputOfImg.load("roadSign_stop.png");
       imgDraw = true;
+      mapDraw = false;
       break;
-    // "3"を押した時
+      // "3"を押した時: メールのアイコン表示
     case 51:
-      inputOfImg.load("roadSign_walk.png");
+      inputOfImg.load("icon_mail.png");
       imgDraw = true;
+      mapDraw = false;
       break;
-    // "4"を押した時
+      // "4"を押した時: マップ表示
     case 52:
-      player.load("test_night.mp4");
-      imgDraw = true;
+      player_map.load("movie_map.mov");
+      imgDraw = false;
+      mapDraw = true;
       break;
-    // "5"を押した時
-    case 53:
-      player.load("test.mp4");
-      imgDraw = true;
+    // "6"を押した時: 昼のドライブ映像
+    case 54:
+      player.load("driver_daytime.mp4");
+      imgDraw = false;
+      mapDraw = false;
+      player.play();
+      break;
+      // "7"を押した時: 夜のドライブ映像
+    case 55:
+      player.load("driver_night.mp4");
+      imgDraw = false;
+      mapDraw = false;
+      player.play();
+      break;
+      // "0"を押した時: 終了
+    case 58:
+      imgDraw = false;
+      mapDraw = false;
+      player.stop();
       break;
     // 上記以外のボタンを押した時
     default:
       imgDraw = false;
+      mapDraw = false;
       break;
   }
   
+  if(imgDraw) {
   inputOfImg.update();
   image = ofxCv::toCv( inputOfImg );
   resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
   ofxCv::toOf( image, outputOfImg );
   outputOfImg.update();
+  }
   
-  player.play();
+  if(mapDraw){
+    player_map.play();
+  }else {
+    player_map.stop();
+  }
 }
 
 //--------------------------------------------------------------

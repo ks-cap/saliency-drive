@@ -2,12 +2,13 @@
 # Created by https://www.gitignore.io/api/c,c++,cmake,opencv,objective-c,openframeworks
 
 #### addition ###
-test.mp4
-cat.jpeg
 roadSign_speed.png
 roadSign_stop.png
-roadSign_walk.png
-test_night.mp4
+icon_mail.png
+driver_night.mp4
+driver_daytime.mp4
+
+movie_map.mov
 
 ### C ###
 # Prerequisites
