@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 // UIの位置を変更する画素値の条件
-#define SALIENCY 100000
+#define SALIENCY 50000
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -22,13 +22,13 @@ void ofApp::setup(){
   
   //---------------------   Picture   ----------------------------
   // 画像の読み込み
-//  inputOfImg.load("roadSign_speed.png");
-//  inputOfImg.update();
-//
-//  image = ofxCv::toCv( inputOfImg );
-//  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
-//  ofxCv::toOf( image, outputOfImg );
-//  outputOfImg.update();
+  //  inputOfImg.load("roadSign_speed.png");
+  //  inputOfImg.update();
+  //
+  //  image = ofxCv::toCv( inputOfImg );
+  //  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
+  //  ofxCv::toOf( image, outputOfImg );
+  //  outputOfImg.update();
   
   //----------------------   Movie   -----------------------------
   // 動画の読み込み
@@ -107,7 +107,7 @@ void ofApp::update(){
 void ofApp::draw(){
   
   // 出力（動画）
-    player.draw( 0, 0 );
+  player.draw( 0, 0 );
   // 出力（カメラ）
   //    ofSetHexColor(0xffffff);
   //    vidGrabber.draw(0, 0, 640, 360 );
@@ -118,7 +118,7 @@ void ofApp::draw(){
   
   //--------------------------------------------------------------
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-//    ofxCv::drawMat( saliencyMap_color, 0, 0 );
+  //  ofxCv::drawMat( saliencyMap_color, 0, 0 );
   //--------------------------------------------------------------
   
   // UI画像
@@ -143,7 +143,6 @@ void ofApp::draw(){
   
   // FPS表示
   ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
-  
 }
 
 //--------------------------------------------------------------
@@ -196,26 +195,26 @@ void ofApp::algorithmMinPixels(bool checkPixels){
       int width = 0;
       for( int widthCount = 0; widthCount < 10; ++widthCount ){
         // 道路にUIを出さないよう条件分岐
-        if ( heightCount<4 || ( heightCount>=4 && ( widthCount<2 || widthCount>8 ) ) ) {
-          cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
-          Mat saliency_roi = saliencyMap_conv(roi);
-          
-          // 10*10のうちの一つの画素値
-          int pixels = 0;
-          for( int y = 0; y < saliency_roi.cols; ++y ){
-            for( int x = 0; x < saliency_roi.rows; ++x ){
-              pixels += (int)saliency_roi.at<uchar>( x, y );
-            }
-          }
-          
-          // 最小値の値とその場所を更新
-          if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
-            minPixels = pixels;
-            widthMin = width;
-            heightMin = height;
-            
+        //        if ( heightCount<4 || ( heightCount>=4 && ( widthCount<2 || widthCount>8 ) ) ) {
+        cv::Rect roi(width, height, saliencyMap_conv.cols / 10, saliencyMap_conv.rows / 10);
+        Mat saliency_roi = saliencyMap_conv(roi);
+        
+        // 10*10のうちの一つの画素値
+        int pixels = 0;
+        for( int y = 0; y < saliency_roi.cols; ++y ){
+          for( int x = 0; x < saliency_roi.rows; ++x ){
+            pixels += (int)saliency_roi.at<uchar>( x, y );
           }
         }
+        
+        // 最小値の値とその場所を更新
+        if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
+          minPixels = pixels;
+          widthMin = width;
+          heightMin = height;
+          
+        }
+        //        }
         
         width += saliencyMap_conv.cols / 10;
       }
@@ -227,39 +226,51 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   switch (key) {
-      // "1"を押した時 道路の標識（速度制限）表示
+      // "1"を押した時 単純形状表示
     case 49:
+      inputOfImg.load("circle.png");
+      imgDraw = true;
+      mapDraw = false;
+      break;
+      // "2"を押した時 道路の標識（速度制限）表示
+    case 50:
       inputOfImg.load("roadSign_speed.png");
       imgDraw = true;
       mapDraw = false;
       break;
-      // "2"を押した時 道路の標識（停止）表示
-    case 50:
+      // "3"を押した時 道路の標識（停止）表示
+    case 51:
       inputOfImg.load("roadSign_stop.png");
       imgDraw = true;
       mapDraw = false;
       break;
-      // "3"を押した時: メールのアイコン表示
-    case 51:
+      // "4"を押した時: メールのアイコン表示
+    case 52:
       inputOfImg.load("icon_mail.png");
       imgDraw = true;
       mapDraw = false;
       break;
-      // "4"を押した時: マップ表示
-    case 52:
+      // "5"を押した時: マップ表示
+    case 53:
+      player_map.load("string.png");
+      imgDraw = true;
+      mapDraw = false;
+      break;
+      // "6"を押した時: マップ表示
+    case 54:
       player_map.load("movie_map.mov");
       imgDraw = false;
       mapDraw = true;
       break;
-    // "6"を押した時: 昼のドライブ映像
-    case 54:
+      // "7"を押した時: 昼のドライブ映像
+    case 55:
       player.load("driver_daytime.mp4");
       imgDraw = false;
       mapDraw = false;
       player.play();
       break;
-      // "7"を押した時: 夜のドライブ映像
-    case 55:
+      // "8"を押した時: 夜のドライブ映像
+    case 56:
       player.load("driver_night.mp4");
       imgDraw = false;
       mapDraw = false;
@@ -271,7 +282,7 @@ void ofApp::keyPressed(int key){
       mapDraw = false;
       player.stop();
       break;
-    // 上記以外のボタンを押した時
+      // 上記以外のボタンを押した時
     default:
       imgDraw = false;
       mapDraw = false;
@@ -279,11 +290,11 @@ void ofApp::keyPressed(int key){
   }
   
   if(imgDraw) {
-  inputOfImg.update();
-  image = ofxCv::toCv( inputOfImg );
-  resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
-  ofxCv::toOf( image, outputOfImg );
-  outputOfImg.update();
+    inputOfImg.update();
+    image = ofxCv::toCv( inputOfImg );
+    resize( image, image, cv::Size(), 128.0/image.cols, 72.0/image.rows );
+    ofxCv::toOf( image, outputOfImg );
+    outputOfImg.update();
   }
   
   if(mapDraw){
