@@ -1,8 +1,9 @@
 #include "ofApp.h"
 
 // UIの位置を変更する画素値の条件
-#define SALIENCY 100000
+#define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
 
+#define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
 //--------------------------------------------------------------
 void ofApp::setup(){
   
@@ -70,7 +71,7 @@ void ofApp::update(){
     // 最小と最大の要素値とそれらの位置を求める
     //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
     
-    // updateが2回目以降の場合, if文の中に入る
+    // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
     positionUI(firstFrameCheck);
     
     // 10*10のうちの画素最小値の場所を取得
@@ -94,7 +95,7 @@ void ofApp::update(){
 void ofApp::draw(){
   
   // 出力（動画）
-//  player.draw( 0, 0 );
+  player.draw( 0, 0 );
   // 出力（カメラ）
   //    ofSetHexColor(0xffffff);
   //    vidGrabber.draw(0, 0, 640, 360 );
@@ -105,7 +106,7 @@ void ofApp::draw(){
   
   //--------------------------------------------------------------
   // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-    ofxCv::drawMat( saliencyMap_color, 0, 0 );
+//    ofxCv::drawMat( saliencyMap_color, 0, 0 );
   //--------------------------------------------------------------
   
   // UI画像
@@ -114,25 +115,10 @@ void ofApp::draw(){
   }
   if ( mapDraw ){
     player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5);
-    // マップ表示が小さいため倍のサイズにしている
-//    int mapWidth, mapHeight;
-//
-//    if( widthMin == ofGetWidth()-(ofGetWidth()/10) ){
-//      mapWidth = ofGetWidth()-(ofGetWidth()/10*2);
-//    }else {
-//      mapWidth = widthMin;
-//    }
-//
-//    if( heightMin == ofGetHeight()-(ofGetHeight()/10) ){
-//      mapHeight = ofGetHeight()-(ofGetHeight()/10*2);
-//    }else {
-//      mapHeight = heightMin;
-//    }
-//    player_map.draw(mapWidth, mapHeight, ofGetWidth()/10*2, ofGetHeight()/10*2);
   }
 
   // FPS表示
-//  9ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
+//  ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
 }
 
 //--------------------------------------------------------------
@@ -154,20 +140,24 @@ Mat ofApp::saliencyAlgorithm(Mat mat){
 //--------------------------------------------------------------
 bool ofApp::positionUI(bool checkUI){
   if( !checkUI ){
+    // 省略記載：（注意）falseだからといってmapDraw = trueとは限らない
+    // 今は firstFrameCheck で条件を発火させ, ボタンを押した直後は入らないようにしている
     int count = imgDraw ? 10 : 5;
     // 前回の顕著性マップで顕著性が低かったピクセルのうちの一つ
     cv::Rect roi(widthMin, heightMin, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
     Mat saliency_roi = saliencyMap_conv(roi);
     int pixels = 0;
-    // 10 * 10のうちの一つの画素値
+    // 10*10のうちの一つの画素値(count: 9216回 * 42.5(255/6))
+    // 5*5のうちの一つの画素値(count: 36864回　* 42.5(255/6))
     for( int y = 0; y < saliency_roi.cols; ++y ){
       for( int x = 0; x < saliency_roi.rows; ++x ){
         pixels += (int)saliency_roi.at<uchar>( x, y );
       }
     }
     // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
-    algorithmCheck = pixels < SALIENCY ? false : true ;
+    int saliency = imgDraw ? SALIENCY_IMG : SALIENCY_MAP;
     
+    algorithmCheck = pixels < saliency ? false : true ;
   }else{
     // 初回のチェックをなくす
     firstFrameCheck = false;
@@ -206,10 +196,8 @@ void ofApp::algorithmMinPixels(bool checkPixels){
           minPixels = pixels;
           widthMin = width;
           heightMin = height;
-          
         }
         //        }
-        
         width += saliencyMap_conv.cols / count;
       }
       height += saliencyMap_conv.rows / count;
@@ -220,7 +208,9 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+  // 条件を発火させ, ボタンを押した直後はpositionUI関数に入らないようにしている
   firstFrameCheck = true;
+  
   switch (key) {
       // "1"を押した時 単純形状表示
     case 49:
