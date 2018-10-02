@@ -210,80 +210,88 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 void ofApp::keyPressed(int key){
     // 条件を発火させ, ボタンを押した直後はpositionUI関数に入らないようにしている
     firstFrameCheck = true;
+    enum File file;
 
     switch (key) {
             // "1"を押した時 単純形状表示
         case 49:
             inputOfImg.load("circle.png");
-            imgDraw = true;
-            mapDraw = false;
+            file = png;
             break;
             // "2"を押した時 道路の標識（速度制限）表示
         case 50:
             inputOfImg.load("roadSign_speed.png");
-            imgDraw = true;
-            mapDraw = false;
+            file = png;
             break;
             // "3"を押した時 道路の標識（停止）表示
         case 51:
             inputOfImg.load("roadSign_stop.png");
-            imgDraw = true;
-            mapDraw = false;
+            file = png;
             break;
             // "4"を押した時: メールのアイコン表示
         case 52:
             inputOfImg.load("icon_mail.png");
-            imgDraw = true;
-            mapDraw = false;
+            file = png;
             break;
             // "5"を押した時: マップ表示
         case 53:
             inputOfImg.load("string.png");
-            imgDraw = true;
-            mapDraw = false;
+            file = png;
             break;
             // "6"を押した時: マップ表示
         case 54:
             player_map.load("movie_map.mov");
-            imgDraw = false;
-            mapDraw = true;
+            file = mov;
             break;
             // "7"を押した時: 昼のドライブ映像
         case 55:
             player.load("driver_daytime.mp4");
-            imgDraw = false;
-            mapDraw = false;
+            file = mp4;
             player.play();
             break;
             // "8"を押した時: 夜のドライブ映像
         case 56:
             player.load("driver_night.mp4");
-            imgDraw = false;
-            mapDraw = false;
+            file = mp4;
             player.play();
             break;
             // "9"を押した時: 昼のドライブ映像(LongVersion)
         case 57:
             player.load("昼のドライブ映像.mp4");
-            imgDraw = false;
-            mapDraw = false;
+            file = mp4;
             player.play();
             break;
             // "0"を押した時: 夜のドライブ映像(LongVersion)
         case 48:
             player.load("夜のドライブ映像.mp4");
-            imgDraw = false;
-            mapDraw = false;
+            file = mp4;
             player.play();
             break;
             // "-"を押した時: 終了
         case 59:
-            imgDraw = false;
-            mapDraw = false;
+            file = none;
             player.stop();
             break;
             // 上記以外のボタンを押した時
         default:
+            file = none;
+            break;
+    }
+
+    switch (file) {
+        case png:
+            imgDraw = true;
+            mapDraw = false;
+            break;
+        case mov:
+            imgDraw = false;
+            mapDraw = true;
+            break;
+        case mp4:
+            imgDraw = false;
+            mapDraw = false;
+            break;
+        case none:
             imgDraw = false;
             mapDraw = false;
             break;
