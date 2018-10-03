@@ -32,4 +32,4 @@ saliencyMap_norm.convertTo( saliencyMap_conv, CV_8UC3 );
 ```
 
 # Demo
-![demo](https://raw.github.com/wiki/Ken-S-0114/saliency-drive/images/saliency.mov.gif)
+![demo](https://raw.github.com/wiki/Ken-S-0114/saliency-drive/images/saliency.gif)
