@@ -1,2 +1,0 @@
-{preExperiment_night.mov} filter=lfs diff=lfs merge=lfs -text
-{preExperiment_daytime.mov} filter=lfs diff=lfs merge=lfs -text
