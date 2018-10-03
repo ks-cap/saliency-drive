@@ -27,23 +27,23 @@ void ofApp::setup(){
 
     //---------------------   Camera   -----------------------------
     // カメラの設定
-    //  camWidth = 1280;
-    //  camHeight = 720;
-    //
-    //  vector<ofVideoDevice> devices = vidGrabber.listDevices();
-    //
-    //  for(size_t i = 0; i < devices.size(); i++){
-    //    if(devices[i].bAvailable){
-    //      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
-    //    }else{
-    //      ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
-    //    }
-    //  }
-    //
-    //  vidGrabber.setDeviceID(0);
-    //  vidGrabber.setDesiredFrameRate(60);
-    //  vidGrabber.initGrabber(camWidth, camHeight);
-    //
+//      camWidth = 1280;
+//      camHeight = 720;
+//
+//      vector<ofVideoDevice> devices = vidGrabber.listDevices();
+//
+//      for(size_t i = 0; i < devices.size(); i++){
+//        if(devices[i].bAvailable){
+//          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
+//        }else{
+//          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
+//        }
+//      }
+//
+//      vidGrabber.setDeviceID(0);
+//      vidGrabber.setDesiredFrameRate(60);
+//      vidGrabber.initGrabber(camWidth, camHeight);
+
 
 }
 
@@ -59,13 +59,13 @@ void ofApp::update(){
     if(player.isFrameNew()){
 
         // カメラの場合
-        //  vidGrabber.update();
-        //
-        //  if( vidGrabber.isFrameNew() ){
-        //    ofPixels & pixels = vidGrabber.getPixels();
+//          vidGrabber.update();
+//
+//          if( vidGrabber.isFrameNew() ){
+//            ofPixels & pixels = vidGrabber.getPixels();
 
         // Mat変換
-        //    saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
+//            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
         saliencyAlgorithm(ofxCv::toCv( player ));
 
         // 最小と最大の要素値とそれらの位置を求める
@@ -96,23 +96,23 @@ void ofApp::draw(){
 
     // 出力（動画）
     player.draw( 0, 0 );
-//    // 出力（カメラ）
+    // 出力（カメラ）
 //    ofSetHexColor(0xffffff);
 //    vidGrabber.draw(0, 0, 640, 360 );
 
     //--------------------------------------------------------------
     // Debug用
 //    player.draw( 0, 0, 640, 360 );
-//    // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+////    // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
 //    ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-//    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+////    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
 //    ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
 
     //--------------------------------------------------------------
     // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
     //    ofxCv::drawMat( saliencyMap_color, 0, 0 );
     // FPS表示
-    ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
+//    ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
     //--------------------------------------------------------------
 
     // UI画像
