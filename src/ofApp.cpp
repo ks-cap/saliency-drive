@@ -70,7 +70,7 @@ void ofApp::update(){
         //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
 
         // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
-        positionUI(firstFrameCheck);
+        saliencyCheck(firstFrameCheck);
 
         // 10*10のうちの画素最小値の場所を取得
         algorithmMinPixels(algorithmCheck);
@@ -143,7 +143,7 @@ Mat ofApp::saliencyAlgorithm(Mat mat){
 }
 
 //--------------------------------------------------------------
-bool ofApp::positionUI(bool checkUI){
+bool ofApp::saliencyCheck(bool checkUI){
     if ( !checkUI ){
         // 省略記載：（注意）falseだからといってmapDraw = trueとは限らない
         // 今は firstFrameCheck で条件を発火させ, ボタンを押した直後は入らないようにしている
@@ -214,12 +214,13 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
-    // 条件を発火させ, ボタンを押した直後はpositionUI関数に入らないようにしている
+    // 条件を発火させ, ボタンを押した直後は saliencyCheck 関数に入らないようにしている
     firstFrameCheck = true;
 
     enum File file;
     
     switch (key) {
+            //-------------   UI   ------------------
             // "1"を押した時 単純形状表示
         case 49:
             inputOfImg.load("circle.png");
@@ -250,19 +251,21 @@ void ofApp::keyPressed(int key){
             player_map.load("movie_map.mov");
             file = mov;
             break;
-            // "7"を押した時: 昼のドライブ映像
-        case 55:
+            //-------------   動画データ   ------------------
+            // "A"を押した時: 昼のドライブ映像
+        case 97:
             player.load("driver_daytime.mp4");
             file = mp4;
             player.play();
             break;
-            // "8"を押した時: 夜のドライブ映像
-        case 56:
+            // "S"を押した時: 夜のドライブ映像
+        case 115:
             player.load("driver_night.mp4");
             file = mp4;
             player.play();
             break;
 
+            //-------------   環境   ------------------
             // "Z"を押した時: release
         case 122:
             use = release;
@@ -276,6 +279,7 @@ void ofApp::keyPressed(int key){
             use = debug;
             break;
 
+            //-------------------------------
             // "-"を押した時: 終了
         case 59:
             file = none;
@@ -349,7 +353,7 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------

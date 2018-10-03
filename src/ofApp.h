@@ -23,7 +23,7 @@ public:
 
     Mat saliencyAlgorithm(Mat mat);
 
-    bool positionUI(bool checkUI);
+    bool saliencyCheck(bool checkUI);
     void algorithmMinPixels(bool checkPixels);
 
     void keyPressed(int key);
