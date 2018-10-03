@@ -30,3 +30,6 @@ saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliency
 normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, NORM_MINMAX );
 saliencyMap_norm.convertTo( saliencyMap_conv, CV_8UC3 );
 ```
+
+# Sample
+![demo](https://raw.github.com/wiki/Ken-S-0114/saliency-drive/images/saliency.gif)
