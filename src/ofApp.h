@@ -80,6 +80,14 @@ public:
         none
     };
 
+    // 環境指定
+    enum Use {
+        release,
+        preRelease,
+        debug
+    };
+    enum Use use;
+
 //    struct fileName {
 //        string circle = "circle.png";
 //        string roadSign_speed = "roadSign_speed.png";

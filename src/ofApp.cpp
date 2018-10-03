@@ -1,8 +1,7 @@
 #include "ofApp.h"
 
-// UIの位置を変更する画素値の条件
+// UIの位置を変更する画素値の条件（0:顕著性が高い, 255:顕著性が低い）
 #define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
-
 #define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -27,22 +26,22 @@ void ofApp::setup(){
 
     //---------------------   Camera   -----------------------------
     // カメラの設定
-//      camWidth = 1280;
-//      camHeight = 720;
-//
-//      vector<ofVideoDevice> devices = vidGrabber.listDevices();
-//
-//      for(size_t i = 0; i < devices.size(); i++){
-//        if(devices[i].bAvailable){
-//          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
-//        }else{
-//          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
-//        }
-//      }
-//
-//      vidGrabber.setDeviceID(0);
-//      vidGrabber.setDesiredFrameRate(60);
-//      vidGrabber.initGrabber(camWidth, camHeight);
+    //      camWidth = 1280;
+    //      camHeight = 720;
+    //
+    //      vector<ofVideoDevice> devices = vidGrabber.listDevices();
+    //
+    //      for(size_t i = 0; i < devices.size(); i++){
+    //        if(devices[i].bAvailable){
+    //          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
+    //        }else{
+    //          ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
+    //        }
+    //      }
+    //
+    //      vidGrabber.setDeviceID(0);
+    //      vidGrabber.setDesiredFrameRate(60);
+    //      vidGrabber.initGrabber(camWidth, camHeight);
 
 
 }
@@ -52,21 +51,20 @@ void ofApp::update(){
     // 動画の場合
     player.update();
 
-    if (mapDraw) {
-        player_map.update();
-    }
+    if (mapDraw) { player_map.update(); }
 
     if(player.isFrameNew()){
-
-        // カメラの場合
-//          vidGrabber.update();
-//
-//          if( vidGrabber.isFrameNew() ){
-//            ofPixels & pixels = vidGrabber.getPixels();
-
         // Mat変換
-//            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
         saliencyAlgorithm(ofxCv::toCv( player ));
+        //---------------------   Camera   -----------------------------
+        //          vidGrabber.update();
+        //
+        //          if( vidGrabber.isFrameNew() ){
+        //            ofPixels & pixels = vidGrabber.getPixels();
+
+        //            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
+
+        //--------------------------------------------------------------
 
         // 最小と最大の要素値とそれらの位置を求める
         //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
@@ -94,26 +92,33 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+    //---------------------   Camera   -----------------------------
+    //    ofSetHexColor(0xffffff);
+    //    vidGrabber.draw(0, 0, 640, 360 );
+
+    //--------------------------------------------------------------
+
     // 出力（動画）
-    player.draw( 0, 0 );
-    // 出力（カメラ）
-//    ofSetHexColor(0xffffff);
-//    vidGrabber.draw(0, 0, 640, 360 );
+    switch (use) {
+        case release:
+            player.draw( 0, 0 );
+            break;
 
-    //--------------------------------------------------------------
-    // Debug用
-//    player.draw( 0, 0, 640, 360 );
-////    // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-//    ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-////    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-//    ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+        case preRelease:
+            // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
+            ofxCv::drawMat( saliencyMap_color, 0, 0 );
+            break;
 
-    //--------------------------------------------------------------
-    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-    //    ofxCv::drawMat( saliencyMap_color, 0, 0 );
-    // FPS表示
-//    ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 20, 20 );
-    //--------------------------------------------------------------
+        case debug:
+            player.draw( 0, 0, 640, 360 );
+            //    // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+            ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
+            //    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+            ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+            // FPS表示
+            ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 1200, 20 );
+            break;
+    }
 
     // UI画像
     if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
@@ -156,8 +161,8 @@ bool ofApp::positionUI(bool checkUI){
         }
         // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
         int saliency = imgDraw ? SALIENCY_IMG : SALIENCY_MAP;
-
         algorithmCheck = pixels < saliency ? false : true ;
+
     } else {
         // 初回のチェックをなくす
         firstFrameCheck = false;
@@ -208,10 +213,12 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+
     // 条件を発火させ, ボタンを押した直後はpositionUI関数に入らないようにしている
     firstFrameCheck = true;
-    enum File file;
 
+    enum File file;
+    
     switch (key) {
             // "1"を押した時 単純形状表示
         case 49:
@@ -255,18 +262,20 @@ void ofApp::keyPressed(int key){
             file = mp4;
             player.play();
             break;
-            // "9"を押した時: 昼のドライブ映像(LongVersion)
-        case 57:
-            player.load("昼のドライブ映像.mp4");
-            file = mp4;
-            player.play();
+
+            // "Z"を押した時: release
+        case 122:
+            use = release;
             break;
-            // "0"を押した時: 夜のドライブ映像(LongVersion)
-        case 48:
-            player.load("夜のドライブ映像.mp4");
-            file = mp4;
-            player.play();
+            // "X"を押した時: preRelease
+        case 120:
+            use = preRelease;
             break;
+            // "C"を押した時: debug
+        case 99:
+            use = debug;
+            break;
+
             // "-"を押した時: 終了
         case 59:
             file = none;
@@ -340,7 +349,7 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
