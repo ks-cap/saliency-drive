@@ -214,6 +214,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    printf("keyPressed: %d", key);
     // 条件を発火させ, ボタンを押した直後は saliencyCheck 関数に入らないようにしている
     firstFrameCheck = true;
 
@@ -261,6 +262,12 @@ void ofApp::keyPressed(int key){
             // "S"を押した時: 夜のドライブ映像
         case 115:
             player.load("driver_night.mp4");
+            file = mp4;
+            player.play();
+            break;
+            // "D"を押した時: 夜のドライブ映像
+        case 100:
+            player.load("driver_sample.mp4");
             file = mp4;
             player.play();
             break;
