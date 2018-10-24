@@ -96,18 +96,12 @@ private:
     cv::Mat frame;
     HogTool hog;
 
-    struct Face {
-        ofPoint center;
-        float width, height;
-    };
-    Face face;
+    std::vector<HogTool::Face> face;
 
-    struct SaliencyRange {
-        ofPoint center;
-        float width, height;
-    };
-    SaliencyRange saliencyRange;
-    
+    std::vector<HogTool::SaliencyRange> saliencyRange;
+
+    std::vector<cv::Rect> saliencyRect;
+
     std::vector<HogTool::FHogData> hogData;
 
 

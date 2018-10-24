@@ -24,6 +24,17 @@ public:
         unsigned long id = 0;
         double confidence = -1;
     };
+
+    struct Face {
+        ofPoint center;
+        float width, height;
+    };
+
+    struct SaliencyRange {
+        ofPoint center;
+        float width, height;
+    };
+    
     cv::Rect dlibRectangleToOpenCV(dlib::rectangle r) {
         return cv::Rect(cv::Point2i(r.left(),
                                     r.top()),

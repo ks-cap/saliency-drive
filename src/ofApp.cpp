@@ -49,10 +49,10 @@ void ofApp::setup(){
     //      vidGrabber.initGrabber(camWidth, camHeight);
 
     // ofxSyphon
-//    mainOutputSyphonServer.setName("Screen Output");
-//
-//    mClient.setup();
-//    mClient.set("","Simple Server");
+    //    mainOutputSyphonServer.setName("Screen Output");
+    //
+    //    mClient.setup();
+    //    mClient.set("","Simple Server");
 }
 
 //--------------------------------------------------------------
@@ -69,7 +69,7 @@ void ofApp::update(){
 
         hogData = hog.multiUpdate(frame);
         for (auto data : hogData) {
-//            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+            //            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
             ofLog()<<"rect_x: "<< data.rect.x;
             ofLog()<<"rect_y: "<< data.rect.y;
             ofLog()<<"rect_widht: "<< data.rect.width;
@@ -77,28 +77,38 @@ void ofApp::update(){
 
             ofRectangle rectangle = ofxCv::toOf(data.rect);
 
-            face.center = rectangle.getCenter();
-            face.width = rectangle.getWidth();
-            face.height = rectangle.getHeight();
+            Face f;
+            f.center += rectangle.getCenter();
+            f.width = rectangle.getWidth();
+            f.height = rectangle.getHeight();
+            face.push_back(f);
 
-            ofLog()<<"face_center: "<< face.center;
-            ofLog()<<"face_width: "<< face.width;
-            ofLog()<<"face_height: "<< face.height;
+            ofLog()<<"face_center: "<< face[data.id].center;
+            ofLog()<<"face_width: "<< face[data.id].width;
+            ofLog()<<"face_height: "<< face[data.id].height;
 
-            saliencyRange.center = face.center;
-            saliencyRange.width = face.width * SALIENCY_RANGE;
-            saliencyRange.height = face.height * SALIENCY_RANGE;
+            SaliencyRange s;
+            s.center = face[data.id].center;
+            s.width = face[data.id].width * SALIENCY_RANGE;
+            s.height = face[data.id].height * SALIENCY_RANGE;
+            saliencyRange.push_back(s);
 
-            ofLog()<<"saliencyRange_center: "<< saliencyRange.center;
-            ofLog()<<"saliencyRange_width: "<< saliencyRange.width;
-            ofLog()<<"saliencyRange_height: "<< saliencyRange.height;
+            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
+            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
+            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
 
-            cv::Rect r;
-            r.height = saliencyRange.height;
-            r.width = saliencyRange.width;
+            cv::Rect _s;
+            _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
+            _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
+            _s.height = saliencyRange[data.id].height;
+            _s.width = saliencyRange[data.id].width;
+            saliencyRect.push_back(_s);
 
-//            cv::Rect a = saliencyRange;
-
+            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
+            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
+            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
+            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
+            
         }
 
         saliencyAlgorithm(frame);
@@ -153,7 +163,7 @@ void ofApp::draw(){
 
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-//            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
+            //            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
             ofxCv::drawMat( saliencyMap_conv, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
@@ -173,7 +183,7 @@ void ofApp::draw(){
     if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
     // ofxSyphon: すべて送信
-//    mainOutputSyphonServer.publishScreen();
+    //    mainOutputSyphonServer.publishScreen();
 }
 
 //--------------------------------------------------------------
