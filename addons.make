@@ -1,4 +1,4 @@
 ofxCv
+ofxDlib
 ofxGui
 ofxOpenCv-contrib
-ofxSyphon

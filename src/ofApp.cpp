@@ -3,6 +3,9 @@
 // UIの位置を変更する画素値の条件（0:顕著性が高い, 255:顕著性が低い）
 #define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
 #define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
+
+#define SALIENCY_RANGE 1.5
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -24,6 +27,8 @@ void ofApp::setup(){
     // 動画の読み込み
     ofSetVerticalSync(true);
 
+    hog.loadMultiSVM(ofToDataPath("face_detector.svm"));
+
     //---------------------   Camera   -----------------------------
     // カメラの設定
     //      camWidth = 1280;
@@ -43,7 +48,11 @@ void ofApp::setup(){
     //      vidGrabber.setDesiredFrameRate(60);
     //      vidGrabber.initGrabber(camWidth, camHeight);
 
-
+    // ofxSyphon
+//    mainOutputSyphonServer.setName("Screen Output");
+//
+//    mClient.setup();
+//    mClient.set("","Simple Server");
 }
 
 //--------------------------------------------------------------
@@ -55,7 +64,45 @@ void ofApp::update(){
 
     if(player.isFrameNew()){
         // Mat変換
-        saliencyAlgorithm(ofxCv::toCv( player ));
+        frame = ofxCv::toCv(player).clone();
+        cv::pyrDown(frame.clone(), frame);
+
+        hogData = hog.multiUpdate(frame);
+        for (auto data : hogData) {
+//            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+            ofLog()<<"rect_x: "<< data.rect.x;
+            ofLog()<<"rect_y: "<< data.rect.y;
+            ofLog()<<"rect_widht: "<< data.rect.width;
+            ofLog()<<"rect_height: "<< data.rect.height;
+
+            ofRectangle rectangle = ofxCv::toOf(data.rect);
+
+            face.center = rectangle.getCenter();
+            face.width = rectangle.getWidth();
+            face.height = rectangle.getHeight();
+
+            ofLog()<<"face_center: "<< face.center;
+            ofLog()<<"face_width: "<< face.width;
+            ofLog()<<"face_height: "<< face.height;
+
+            saliencyRange.center = face.center;
+            saliencyRange.width = face.width * SALIENCY_RANGE;
+            saliencyRange.height = face.height * SALIENCY_RANGE;
+
+            ofLog()<<"saliencyRange_center: "<< saliencyRange.center;
+            ofLog()<<"saliencyRange_width: "<< saliencyRange.width;
+            ofLog()<<"saliencyRange_height: "<< saliencyRange.height;
+
+            cv::Rect r;
+            r.height = saliencyRange.height;
+            r.width = saliencyRange.width;
+
+//            cv::Rect a = saliencyRange;
+
+        }
+
+        saliencyAlgorithm(frame);
+
         //---------------------   Camera   -----------------------------
         //          vidGrabber.update();
         //
@@ -83,7 +130,7 @@ void ofApp::update(){
             }
         }
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
-        applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, COLORMAP_JET );
+        applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, cv::COLORMAP_JET );
 
     }
 
@@ -101,12 +148,13 @@ void ofApp::draw(){
     // 出力（動画）
     switch (use) {
         case release:
-            player.draw( 0, 0 );
+            player.draw(0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-            ofxCv::drawMat( saliencyMap_color, 0, 0 );
+//            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat( saliencyMap_conv, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case debug:
@@ -124,18 +172,19 @@ void ofApp::draw(){
     if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
     if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
+    // ofxSyphon: すべて送信
+//    mainOutputSyphonServer.publishScreen();
 }
 
 //--------------------------------------------------------------
-Mat ofApp::saliencyAlgorithm(Mat mat){
-    Mat mat_gray;
+cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
+    cv::Mat mat_gray;
     // 白黒加工
-    cvtColor( mat.clone(), mat_gray, COLOR_BGR2GRAY );
-
+    cv::cvtColor( mat.clone(), mat_gray, cv::COLOR_BGR2GRAY );
     // 顕著性マップ(SPECTRAL_RESIDUAL)に変換
     saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliencyMap );
     // アルファチャンネルの正規化を行う
-    normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, NORM_MINMAX );
+    cv::normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX );
     // Matの型（ビット深度）を変換する
     saliencyMap_norm.convertTo( saliencyMap_conv, CV_8UC3 );
 
@@ -150,7 +199,7 @@ bool ofApp::saliencyCheck(bool checkUI){
         int count = imgDraw ? 10 : 5;
         // 前回の顕著性マップで顕著性が低かったピクセルのうちの一つ
         cv::Rect roi(widthMin, heightMin, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
-        Mat saliency_roi = saliencyMap_conv(roi);
+        cv::Mat saliency_roi = saliencyMap_conv(roi);
         int pixels = 0;
         // 10*10のうちの一つの画素値(count: 9216回 * 42.5(255/6))
         // 5*5のうちの一つの画素値(count: 36864回　* 42.5(255/6))
@@ -186,7 +235,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                 // 道路にUIを出さないよう条件分岐
                 //        if ( heightCount<4 || ( heightCount>=4 && ( widthCount<2 || widthCount>8 ) ) ) {
                 cv::Rect roi(width, height, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
-                Mat saliency_roi = saliencyMap_conv(roi);
+                cv::Mat saliency_roi = saliencyMap_conv(roi);
 
                 // 10*10(5*5)のうちの一つの画素値
                 int pixels = 0;
@@ -252,6 +301,11 @@ void ofApp::keyPressed(int key){
             player_map.load("movie_map.mov");
             file = mov;
             break;
+            // "7"を押した時 道路の標識（速度制限）表示: 半透明
+        case 55:
+            inputOfImg.load("roadSign_speed2.png");
+            file = png;
+            break;
             //-------------   動画データ   ------------------
             // "A"を押した時: 昼のドライブ映像
         case 97:
@@ -265,9 +319,9 @@ void ofApp::keyPressed(int key){
             file = mp4;
             player.play();
             break;
-            // "D"を押した時: 夜のドライブ映像
+            // "D"を押した時: サンプル映像
         case 100:
-            player.load("driver_sample.mp4");
+            player.load("sampleMovie.mov");
             file = mp4;
             player.play();
             break;

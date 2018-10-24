@@ -4,15 +4,17 @@
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
 #include "ofxGui.h"
+
 #include "saliencySpecializedClasses.hpp"
+
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc.hpp"
 #include "iostream"
 
-using namespace std;
-using namespace cv;
-using namespace saliency;
+#include "ofxDLib.h"
+#include "hogTools.hpp"
+
 
 class ofApp : public ofBaseApp{
 
@@ -21,7 +23,9 @@ public:
     void update();
     void draw();
 
-    Mat saliencyAlgorithm(Mat mat);
+private:
+
+    cv::Mat saliencyAlgorithm(cv::Mat mat);
 
     bool saliencyCheck(bool checkUI);
     void algorithmMinPixels(bool checkPixels);
@@ -41,7 +45,7 @@ public:
     // 画像
     ofImage inputOfImg;
     // UI
-    Mat image;
+    cv::Mat image;
     // 動画
     ofVideoPlayer player;
     ofVideoPlayer player_map;
@@ -57,10 +61,10 @@ public:
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
     // 顕著性マップ
-    Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
+    cv::Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
 
     // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
-    Ptr<StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = StaticSaliencySpectralResidual::create();
+    cv::Ptr<cv::saliency::StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = cv::saliency::StaticSaliencySpectralResidual::create();
 
     // 10*10の顕著マップの最小値の場所
     int widthMin, heightMin;
@@ -88,16 +92,35 @@ public:
     };
     enum Use use;
 
-//    struct fileName {
-//        string circle = "circle.png";
-//        string roadSign_speed = "roadSign_speed.png";
-//        string roadSign_stop = "roadSign_stop.png";
-//        string icon_mail = "icon_mail.png";
-//        string string_picture = "string.png";
-//        string map = "movie_map.mov";
-//        string driver_daytime = "driver_daytime.mp4";
-//        string driver_night = "driver_night.mp4";
-//        string driver_daytime_long = "昼のドライブ映像.mp4";
-//        string driver_night_long = "夜のドライブ映像.mp4";
-//    };
+
+    cv::Mat frame;
+    HogTool hog;
+
+    struct Face {
+        ofPoint center;
+        float width, height;
+    };
+    Face face;
+
+    struct SaliencyRange {
+        ofPoint center;
+        float width, height;
+    };
+    SaliencyRange saliencyRange;
+    
+    std::vector<HogTool::FHogData> hogData;
+
+
+    //    struct fileName {
+    //        string circle = "circle.png";
+    //        string roadSign_speed = "roadSign_speed.png";
+    //        string roadSign_stop = "roadSign_stop.png";
+    //        string icon_mail = "icon_mail.png";
+    //        string string_picture = "string.png";
+    //        string map = "movie_map.mov";
+    //        string driver_daytime = "driver_daytime.mp4";
+    //        string driver_night = "driver_night.mp4";
+    //        string driver_daytime_long = "昼のドライブ映像.mp4";
+    //        string driver_night_long = "夜のドライブ映像.mp4";
+    //    };
 };

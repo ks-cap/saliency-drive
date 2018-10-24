@@ -9,296 +9,6 @@
 		<string>46</string>
 		<key>objects</key>
 		<dict>
-			<key>821159A073ABA066739FD401</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>D58DCB2C0AEFDE6171E29540</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>osx</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>398D2AD7D162CE13BF40CD4F</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>821159A073ABA066739FD401</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>lib</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>4D508D34156E7076531D9084</key>
-			<dict>
-				<key>fileRef</key>
-				<string>D58DCB2C0AEFDE6171E29540</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>E1A3FD40C8BCD507345F1126</key>
-			<dict>
-				<key>fileRef</key>
-				<string>D58DCB2C0AEFDE6171E29540</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>D58DCB2C0AEFDE6171E29540</key>
-			<dict>
-				<key>lastKnownFileType</key>
-				<string>wrapper.framework</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>Syphon.framework</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx/Syphon.framework</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>71FFD50EA75BCC76F0C58D12</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>SyphonNameboundClient.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/libs/Syphon/src/SyphonNameboundClient.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>50EAFB5FF7C5722E7B4895C7</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>E3405C5AE387BDDC2AD19473</string>
-					<string>71FFD50EA75BCC76F0C58D12</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>src</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>65F3085962B3A8825746C3C2</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>50EAFB5FF7C5722E7B4895C7</string>
-					<string>398D2AD7D162CE13BF40CD4F</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>Syphon</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>2317994671CD76BBA16927B8</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>65F3085962B3A8825746C3C2</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>libs</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>C9109422648B170B07A778CF</key>
-			<dict>
-				<key>fileRef</key>
-				<string>E3405C5AE387BDDC2AD19473</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>E3405C5AE387BDDC2AD19473</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.cpp.objcpp</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>SyphonNameboundClient.m</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/libs/Syphon/src/SyphonNameboundClient.m</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>337B812806A0E7D26A029E5A</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonServerDirectory.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonServerDirectory.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>01FAC3552E00C3620035EA2F</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonClient.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonClient.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>11DF9AB1B4EAA63E3B190CA0</key>
-			<dict>
-				<key>fileRef</key>
-				<string>E723BEF4C55D236E24639608</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>E723BEF4C55D236E24639608</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.cpp.objcpp</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonServerDirectory.mm</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonServerDirectory.mm</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>1F558B76FB3412843DDAA031</key>
-			<dict>
-				<key>fileRef</key>
-				<string>03EA4DA95B5E1B8409FC058E</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>03EA4DA95B5E1B8409FC058E</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.cpp.objcpp</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonClient.mm</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonClient.mm</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>46BBCC26D60B589958BF0D03</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonServer.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonServer.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>8D60C222CBD3F869382832E9</key>
-			<dict>
-				<key>fileRef</key>
-				<string>32D6F27DC6308427F9A278C1</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>32D6F27DC6308427F9A278C1</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.cpp.objcpp</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphonServer.mm</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphonServer.mm</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>49A9E39C52C2DF4DDA1E185F</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>0FB83AC7747296DD35C1C295</string>
-					<string>32D6F27DC6308427F9A278C1</string>
-					<string>46BBCC26D60B589958BF0D03</string>
-					<string>03EA4DA95B5E1B8409FC058E</string>
-					<string>E723BEF4C55D236E24639608</string>
-					<string>01FAC3552E00C3620035EA2F</string>
-					<string>337B812806A0E7D26A029E5A</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>src</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>7F3C04577424427D348B1425</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>49A9E39C52C2DF4DDA1E185F</string>
-					<string>2317994671CD76BBA16927B8</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>ofxSyphon</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
-			<key>0FB83AC7747296DD35C1C295</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ofxSyphon.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxSyphon/src/ofxSyphon.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
 			<key>907B9CECE98D7BE96B77C110</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -6841,6 +6551,239 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>BF7E9510D349E6F09713AE1D</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ofxDLib.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/ofxDLib.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>29814059D9554CEB23B080BD</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>HOGtrainer.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/HOGtrainer.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>CC13FF91A74E0D9C031E8691</key>
+			<dict>
+				<key>fileRef</key>
+				<string>ADD696C53606E778F3CCE7AC</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>ADD696C53606E778F3CCE7AC</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>HOGtrainer.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/HOGtrainer.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>9B0E5B8F3FB40A8E02D1D20D</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ObjectTracker.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/ObjectTracker.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>45BD49690208A49C9E5C63FC</key>
+			<dict>
+				<key>fileRef</key>
+				<string>FD669628D13BE3AD5333ED89</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>FD669628D13BE3AD5333ED89</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ObjectTracker.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/ObjectTracker.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>6D7EA3E3DCCEA6391AB408A8</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FaceTracker.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/FaceTracker.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>AC7CFCB9892285796ED2C920</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>B2C04E1D0F65EB4487E954DB</string>
+					<string>6D7EA3E3DCCEA6391AB408A8</string>
+					<string>FD669628D13BE3AD5333ED89</string>
+					<string>9B0E5B8F3FB40A8E02D1D20D</string>
+					<string>ADD696C53606E778F3CCE7AC</string>
+					<string>29814059D9554CEB23B080BD</string>
+					<string>BF7E9510D349E6F09713AE1D</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>src</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>3A67DF2FE69024F19020F32D</key>
+			<dict>
+				<key>fileRef</key>
+				<string>B2C04E1D0F65EB4487E954DB</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>B2C04E1D0F65EB4487E954DB</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FaceTracker.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/src/FaceTracker.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>B56F2762D2D4CA8B698E325E</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>6B658E67547EDFD9E0A5DA88</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>all</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>37DBF474105AD3891BFC7A13</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>B56F2762D2D4CA8B698E325E</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>include</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>946893DFF7BBA43C52FA9DF9</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>37DBF474105AD3891BFC7A13</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>dlib</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>A7CBB53BFBC383DB36A6C4A7</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>946893DFF7BBA43C52FA9DF9</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>libs</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>E2F22E08CE15D0BE9895E803</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>A7CBB53BFBC383DB36A6C4A7</string>
+					<string>AC7CFCB9892285796ED2C920</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>ofxDlib</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>D78610557DBC087DF4A2A5D5</key>
+			<dict>
+				<key>fileRef</key>
+				<string>6B658E67547EDFD9E0A5DA88</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>6B658E67547EDFD9E0A5DA88</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>source.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxDlib/libs/dlib/include/all/source.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>F76B4A79BD8DE4854141CB47</key>
 			<dict>
 				<key>fileRef</key>
@@ -7538,6 +7481,43 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>6A31B96ACC59D2093FCC60E2</key>
+			<dict>
+				<key>fileRef</key>
+				<string>262AF048532C50E7016E855C</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>262AF048532C50E7016E855C</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>hogTools.cpp</string>
+				<key>path</key>
+				<string>src/hogTools.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>213CA82B190DDADEC8BBC979</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>hogTools.hpp</string>
+				<key>path</key>
+				<string>src/hogTools.hpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>6948EE371B920CB800B5AC1A</key>
 			<dict>
 				<key>children</key>
@@ -7554,9 +7534,9 @@
 				<key>children</key>
 				<array>
 					<string>6025FAF6414C2CA589764D26</string>
+					<string>E2F22E08CE15D0BE9895E803</string>
 					<string>480A780D8D0308AE4A368801</string>
 					<string>07B4CCD49C807C259FEA12F9</string>
-					<string>7F3C04577424427D348B1425</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -7720,6 +7700,11 @@
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
 						<string>../../../addons/ofxCv/src</string>
+						<string>../../../addons/ofxDlib/libs</string>
+						<string>../../../addons/ofxDlib/libs/libjpeg</string>
+						<string>../../../addons/ofxDlib/libs/libpng</string>
+						<string>../../../addons/ofxDlib/src</string>
+						<string>../../../addons/ofxDlib/src</string>
 						<string>../../../addons/ofxGui/src</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv</string>
@@ -7773,12 +7758,6 @@
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/lib/osx</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/license</string>
 						<string>../../../addons/ofxOpenCv-contrib/src</string>
-						<string>../../../addons/ofxSyphon/libs</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/src</string>
-						<string>../../../addons/ofxSyphon/src</string>
 					</array>
 					<key>CONFIGURATION_BUILD_DIR</key>
 					<string>$(SRCROOT)/bin/</string>
@@ -7846,6 +7825,11 @@
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
 						<string>../../../addons/ofxCv/src</string>
+						<string>../../../addons/ofxDlib/libs</string>
+						<string>../../../addons/ofxDlib/libs/libjpeg</string>
+						<string>../../../addons/ofxDlib/libs/libpng</string>
+						<string>../../../addons/ofxDlib/src</string>
+						<string>../../../addons/ofxDlib/src</string>
 						<string>../../../addons/ofxGui/src</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv</string>
@@ -7899,12 +7883,6 @@
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/lib/osx</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/license</string>
 						<string>../../../addons/ofxOpenCv-contrib/src</string>
-						<string>../../../addons/ofxSyphon/libs</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/src</string>
-						<string>../../../addons/ofxSyphon/src</string>
 					</array>
 					<key>CONFIGURATION_BUILD_DIR</key>
 					<string>$(SRCROOT)/bin/</string>
@@ -7961,6 +7939,7 @@
 				<array>
 					<string>E4B69E200A3A1BDC003C02F2</string>
 					<string>E4B69E210A3A1BDC003C02F2</string>
+					<string>6A31B96ACC59D2093FCC60E2</string>
 					<string>2023EF517ED2D8B397511D4B</string>
 					<string>DBCB84A37F9AECC254870D79</string>
 					<string>7CDAD32BE4FA46701E3552C7</string>
@@ -7974,6 +7953,10 @@
 					<string>45CC483A999BF1065A6B926C</string>
 					<string>B6840996567E78436F7ECFAB</string>
 					<string>F76B4A79BD8DE4854141CB47</string>
+					<string>D78610557DBC087DF4A2A5D5</string>
+					<string>3A67DF2FE69024F19020F32D</string>
+					<string>45BD49690208A49C9E5C63FC</string>
+					<string>CC13FF91A74E0D9C031E8691</string>
 					<string>856AA354D08AB4B323081444</string>
 					<string>B56FE57CC35806596D38118C</string>
 					<string>1CD33E884D9E3358252E82A1</string>
@@ -7989,10 +7972,6 @@
 					<string>B35D6B64A6432B843D2D51F1</string>
 					<string>67180F4C27A540DBD2099A70</string>
 					<string>FFF22CE91BA6E19DA38EC4DA</string>
-					<string>8D60C222CBD3F869382832E9</string>
-					<string>1F558B76FB3412843DDAA031</string>
-					<string>11DF9AB1B4EAA63E3B190CA0</string>
-					<string>C9109422648B170B07A778CF</string>
 				</array>
 				<key>isa</key>
 				<string>PBXSourcesBuildPhase</string>
@@ -8006,7 +7985,6 @@
 				<key>files</key>
 				<array>
 					<string>E4328149138ABC9F0047C5CB</string>
-					<string>E1A3FD40C8BCD507345F1126</string>
 				</array>
 				<key>isa</key>
 				<string>PBXFrameworksBuildPhase</string>
@@ -8087,6 +8065,11 @@
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
 						<string>../../../addons/ofxCv/src</string>
+						<string>../../../addons/ofxDlib/libs</string>
+						<string>../../../addons/ofxDlib/libs/libjpeg</string>
+						<string>../../../addons/ofxDlib/libs/libpng</string>
+						<string>../../../addons/ofxDlib/src</string>
+						<string>../../../addons/ofxDlib/src</string>
 						<string>../../../addons/ofxGui/src</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv</string>
@@ -8140,12 +8123,6 @@
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/lib/osx</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/license</string>
 						<string>../../../addons/ofxOpenCv-contrib/src</string>
-						<string>../../../addons/ofxSyphon/libs</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/src</string>
-						<string>../../../addons/ofxSyphon/src</string>
 					</array>
 					<key>COMBINE_HIDPI_IMAGES</key>
 					<string>YES</string>
@@ -8155,7 +8132,6 @@
 					<array>
 						<string>$(inherited)</string>
 						<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
 					</array>
 					<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
 					<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
@@ -8204,6 +8180,11 @@
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
 						<string>../../../addons/ofxCv/src</string>
+						<string>../../../addons/ofxDlib/libs</string>
+						<string>../../../addons/ofxDlib/libs/libjpeg</string>
+						<string>../../../addons/ofxDlib/libs/libpng</string>
+						<string>../../../addons/ofxDlib/src</string>
+						<string>../../../addons/ofxDlib/src</string>
 						<string>../../../addons/ofxGui/src</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv</string>
@@ -8257,12 +8238,6 @@
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/lib/osx</string>
 						<string>../../../addons/ofxOpenCv-contrib/libs/opencv/license</string>
 						<string>../../../addons/ofxOpenCv-contrib/src</string>
-						<string>../../../addons/ofxSyphon/libs</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/src</string>
-						<string>../../../addons/ofxSyphon/src</string>
 					</array>
 					<key>COMBINE_HIDPI_IMAGES</key>
 					<string>YES</string>
@@ -8272,7 +8247,6 @@
 					<array>
 						<string>$(inherited)</string>
 						<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
-						<string>../../../addons/ofxSyphon/libs/Syphon/lib/osx</string>
 					</array>
 					<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
 					<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
@@ -8309,6 +8283,8 @@
 					<string>E4B69E1D0A3A1BDC003C02F2</string>
 					<string>E4B69E1E0A3A1BDC003C02F2</string>
 					<string>E4B69E1F0A3A1BDC003C02F2</string>
+					<string>213CA82B190DDADEC8BBC979</string>
+					<string>262AF048532C50E7016E855C</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -8425,9 +8401,7 @@ rsync -aved ../../../libs/glut/lib/osx/GLUT.framework "$TARGET_BUILD_DIR/$PRODUC
 				<key>dstSubfolderSpec</key>
 				<string>10</string>
 				<key>files</key>
-				<array>
-					<string>4D508D34156E7076531D9084</string>
-				</array>
+				<array />
 				<key>isa</key>
 				<string>PBXCopyFilesBuildPhase</string>
 				<key>runOnlyForDeploymentPostprocessing</key>
