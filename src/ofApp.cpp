@@ -4,7 +4,7 @@
 #define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
 #define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
 
-#define SALIENCY_RANGE 1.5
+#define SALIENCY_RANGE 2
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -65,50 +65,54 @@ void ofApp::update(){
     if(player.isFrameNew()){
         // Mat変換
         frame = ofxCv::toCv(player).clone();
-//        cv::pyrDown(frame.clone(), frame);
-//
-//        hogData = hog.multiUpdate(frame);
-//        for (auto data : hogData) {
-//            //            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+        cv::pyrDown(frame.clone(), frame);
+
+        hogData = hog.multiUpdate(frame);
+        
+        for (auto data : hogData) {
+            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+
 //            ofLog()<<"rect_x: "<< data.rect.x;
 //            ofLog()<<"rect_y: "<< data.rect.y;
 //            ofLog()<<"rect_widht: "<< data.rect.width;
 //            ofLog()<<"rect_height: "<< data.rect.height;
-//
-//            ofRectangle rectangle = ofxCv::toOf(data.rect);
-//
-//            HogTool::Face f;
-//            f.center += rectangle.getCenter();
-//            f.width = rectangle.getWidth();
-//            f.height = rectangle.getHeight();
-//            face.push_back(f);
-//
+
+            ofRectangle rectangle = ofxCv::toOf(data.rect);
+
+            HogTool::Face f;
+            f.center += rectangle.getCenter();
+            f.width = rectangle.getWidth();
+            f.height = rectangle.getHeight();
+            face.push_back(f);
+
 //            ofLog()<<"face_center: "<< face[data.id].center;
 //            ofLog()<<"face_width: "<< face[data.id].width;
 //            ofLog()<<"face_height: "<< face[data.id].height;
-//
-//            HogTool::SaliencyRange s;
-//            s.center = face[data.id].center;
-//            s.width = face[data.id].width * SALIENCY_RANGE;
-//            s.height = face[data.id].height * SALIENCY_RANGE;
-//            saliencyRange.push_back(s);
-//
+
+            HogTool::SaliencyRange s;
+            s.center = face[data.id].center;
+            s.width = face[data.id].width * SALIENCY_RANGE;
+            s.height = face[data.id].height * SALIENCY_RANGE;
+            saliencyRange.push_back(s);
+
 //            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
 //            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
 //            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
-//
-//            cv::Rect _s;
-//            _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
-//            _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
-//            _s.height = saliencyRange[data.id].height;
-//            _s.width = saliencyRange[data.id].width;
-//            saliencyRect.push_back(_s);
-//
+
+            cv::Rect _s;
+            _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
+            _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
+            _s.height = saliencyRange[data.id].height;
+            _s.width = saliencyRange[data.id].width;
+            saliencyRect.push_back(_s);
+
+            cv::rectangle(frame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
+
 //            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
 //            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
 //            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
 //            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
-//        }
+        }
 
         saliencyAlgorithm(frame);
 
@@ -140,10 +144,10 @@ void ofApp::update(){
         }
 
         // saliency適応範囲以外をマスク
-//        mask = cv::Mat::zeros(saliencyMap_conv.cols, saliencyMap_conv.rows, CV_8UC3);
-//        for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-//            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
-//        }
+        mask = cv::Mat::zeros(saliencyMap_conv.cols, saliencyMap_conv.rows, CV_8UC3);
+        for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
+            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
+        }
 //        saliencyMap_conv.copyTo(result,mask);
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
@@ -171,17 +175,18 @@ void ofApp::draw(){
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
             //            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
-            ofxCv::drawMat( saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat(frame, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case debug:
-            player.draw( 0, 0, 640, 360 );
+            player.draw(0, 0, 640, 360);
+            ofxCv::drawMat(frame, 640, 0, 640, 360);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-            ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
+            ofxCv::drawMat(saliencyMap_conv, 0, 360, 640, 360);
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-            ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
+            ofxCv::drawMat(saliencyMap_color, 640, 360, 640, 360);
             // FPS表示
-            ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 1200, 20 );
+            ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 1200, 20);
             break;
     }
 
@@ -189,6 +194,10 @@ void ofApp::draw(){
     if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
     if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
+    face.clear();
+    saliencyRange.clear();
+    saliencyRect.clear();
+    
     // ofxSyphon: すべて送信
     //    mainOutputSyphonServer.publishScreen();
 }
@@ -283,7 +292,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
-    printf("keyPressed: %d", key);
+    printf("keyPressed: %d\n", key);
     // 条件を発火させ, ボタンを押した直後は saliencyCheck 関数に入らないようにしている
     firstFrameCheck = true;
 
