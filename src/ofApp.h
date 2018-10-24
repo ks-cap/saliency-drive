@@ -14,22 +14,22 @@
 
 #include "ofxDLib.h"
 #include "hogTools.hpp"
-
+#include "saliencyTools.hpp"
 
 class ofApp : public ofBaseApp{
-
+    
 public:
     void setup();
     void update();
     void draw();
-
+    
 private:
-
+    
     cv::Mat saliencyAlgorithm(cv::Mat mat);
-
+    
     bool saliencyCheck(bool checkUI);
     void algorithmMinPixels(bool checkPixels);
-
+    
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -41,7 +41,7 @@ private:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-
+    
     // 画像
     ofImage inputOfImg;
     // UI
@@ -53,18 +53,20 @@ private:
     ofVideoGrabber vidGrabber;
     ofPixels videoInverted;
     int camWidth, camHeight;
-
+    
     // 最小と最大の要素値とそれらの位置
+//    SaliencyTool::MinMax minMax;
+
     cv::Point min_loc, max_loc;
     double min_val, max_val;
-
+    
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
     // 顕著性マップ
     cv::Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
-
-    // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム : 画像)
-    cv::Ptr<cv::saliency::StaticSaliencySpectralResidual> saliencyAlgorithm_SPECTRAL_RESIDUAL = cv::saliency::StaticSaliencySpectralResidual::create();
+    // 顕著性マップ + マスク処理
+    cv::Mat mask;
+    cv::Mat result;
 
     // 10*10の顕著マップの最小値の場所
     int widthMin, heightMin;
@@ -72,10 +74,10 @@ private:
     bool firstFrameCheck;
     // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
     bool algorithmCheck;
-
+    
     // どちらを描画するか：画像（Picture）か動画（Map）か
     bool imgDraw, mapDraw;
-
+    
     // ファイルの拡張子
     enum File {
         png,
@@ -83,7 +85,7 @@ private:
         mp4,
         none
     };
-
+    
     // 環境指定
     enum Use {
         release,
@@ -91,20 +93,20 @@ private:
         debug
     };
     enum Use use;
-
-
+    
     cv::Mat frame;
     HogTool hog;
-
+    
+    // 顔の範囲
     std::vector<HogTool::Face> face;
-
+    // Saliency適応範囲
     std::vector<HogTool::SaliencyRange> saliencyRange;
-
+    // Saliencyの矩形
     std::vector<cv::Rect> saliencyRect;
-
+    
     std::vector<HogTool::FHogData> hogData;
-
-
+    
+    
     //    struct fileName {
     //        string circle = "circle.png";
     //        string roadSign_speed = "roadSign_speed.png";

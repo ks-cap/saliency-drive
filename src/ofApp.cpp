@@ -65,51 +65,50 @@ void ofApp::update(){
     if(player.isFrameNew()){
         // Mat変換
         frame = ofxCv::toCv(player).clone();
-        cv::pyrDown(frame.clone(), frame);
-
-        hogData = hog.multiUpdate(frame);
-        for (auto data : hogData) {
-            //            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
-            ofLog()<<"rect_x: "<< data.rect.x;
-            ofLog()<<"rect_y: "<< data.rect.y;
-            ofLog()<<"rect_widht: "<< data.rect.width;
-            ofLog()<<"rect_height: "<< data.rect.height;
-
-            ofRectangle rectangle = ofxCv::toOf(data.rect);
-
-            Face f;
-            f.center += rectangle.getCenter();
-            f.width = rectangle.getWidth();
-            f.height = rectangle.getHeight();
-            face.push_back(f);
-
-            ofLog()<<"face_center: "<< face[data.id].center;
-            ofLog()<<"face_width: "<< face[data.id].width;
-            ofLog()<<"face_height: "<< face[data.id].height;
-
-            SaliencyRange s;
-            s.center = face[data.id].center;
-            s.width = face[data.id].width * SALIENCY_RANGE;
-            s.height = face[data.id].height * SALIENCY_RANGE;
-            saliencyRange.push_back(s);
-
-            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
-            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
-            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
-
-            cv::Rect _s;
-            _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
-            _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
-            _s.height = saliencyRange[data.id].height;
-            _s.width = saliencyRange[data.id].width;
-            saliencyRect.push_back(_s);
-
-            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
-            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
-            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
-            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
-            
-        }
+//        cv::pyrDown(frame.clone(), frame);
+//
+//        hogData = hog.multiUpdate(frame);
+//        for (auto data : hogData) {
+//            //            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+//            ofLog()<<"rect_x: "<< data.rect.x;
+//            ofLog()<<"rect_y: "<< data.rect.y;
+//            ofLog()<<"rect_widht: "<< data.rect.width;
+//            ofLog()<<"rect_height: "<< data.rect.height;
+//
+//            ofRectangle rectangle = ofxCv::toOf(data.rect);
+//
+//            HogTool::Face f;
+//            f.center += rectangle.getCenter();
+//            f.width = rectangle.getWidth();
+//            f.height = rectangle.getHeight();
+//            face.push_back(f);
+//
+//            ofLog()<<"face_center: "<< face[data.id].center;
+//            ofLog()<<"face_width: "<< face[data.id].width;
+//            ofLog()<<"face_height: "<< face[data.id].height;
+//
+//            HogTool::SaliencyRange s;
+//            s.center = face[data.id].center;
+//            s.width = face[data.id].width * SALIENCY_RANGE;
+//            s.height = face[data.id].height * SALIENCY_RANGE;
+//            saliencyRange.push_back(s);
+//
+//            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
+//            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
+//            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
+//
+//            cv::Rect _s;
+//            _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
+//            _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
+//            _s.height = saliencyRange[data.id].height;
+//            _s.width = saliencyRange[data.id].width;
+//            saliencyRect.push_back(_s);
+//
+//            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
+//            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
+//            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
+//            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
+//        }
 
         saliencyAlgorithm(frame);
 
@@ -139,6 +138,14 @@ void ofApp::update(){
                 //        ofLog()<<"(int)saliencyMap_conv.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap_conv.at<uchar>( x, y );
             }
         }
+
+        // saliency適応範囲以外をマスク
+//        mask = cv::Mat::zeros(saliencyMap_conv.cols, saliencyMap_conv.rows, CV_8UC3);
+//        for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
+//            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
+//        }
+//        saliencyMap_conv.copyTo(result,mask);
+
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, cv::COLORMAP_JET );
 
@@ -164,14 +171,14 @@ void ofApp::draw(){
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
             //            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
-            ofxCv::drawMat( saliencyMap_conv, 0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat( saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case debug:
             player.draw( 0, 0, 640, 360 );
-            //    // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
+            // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat( saliencyMap_conv, 0, 360, 640, 360 );
-            //    // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
+            // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
             ofxCv::drawMat( saliencyMap_color, 640, 360, 640, 360 );
             // FPS表示
             ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate()), 1200, 20 );
@@ -191,8 +198,11 @@ cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
     cv::Mat mat_gray;
     // 白黒加工
     cv::cvtColor( mat.clone(), mat_gray, cv::COLOR_BGR2GRAY );
-    // 顕著性マップ(SPECTRAL_RESIDUAL)に変換
-    saliencyAlgorithm_SPECTRAL_RESIDUAL->computeSaliency( mat_gray.clone(), saliencyMap );
+    // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム)
+    cv::Ptr<cv::saliency::Saliency> saliencyAlgorithm;
+    saliencyAlgorithm = cv::saliency::StaticSaliencySpectralResidual::create();
+    saliencyAlgorithm->computeSaliency( mat_gray.clone(), saliencyMap );
+
     // アルファチャンネルの正規化を行う
     cv::normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX );
     // Matの型（ビット深度）を変換する
