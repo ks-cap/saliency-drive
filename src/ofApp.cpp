@@ -65,17 +65,19 @@ void ofApp::update(){
     if(player.isFrameNew()){
         // Mat変換
         frame = ofxCv::toCv(player).clone();
+        // 画質を半分に下げる
         cv::pyrDown(frame.clone(), frame);
+//        cv::pyrDown(frame.clone(), frame);
 
         hogData = hog.multiUpdate(frame);
         
         for (auto data : hogData) {
             cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
 
-//            ofLog()<<"rect_x: "<< data.rect.x;
-//            ofLog()<<"rect_y: "<< data.rect.y;
-//            ofLog()<<"rect_widht: "<< data.rect.width;
-//            ofLog()<<"rect_height: "<< data.rect.height;
+            //            ofLog()<<"rect_x: "<< data.rect.x;
+            //            ofLog()<<"rect_y: "<< data.rect.y;
+            //            ofLog()<<"rect_widht: "<< data.rect.width;
+            //            ofLog()<<"rect_height: "<< data.rect.height;
 
             ofRectangle rectangle = ofxCv::toOf(data.rect);
 
@@ -85,9 +87,9 @@ void ofApp::update(){
             f.height = rectangle.getHeight();
             face.push_back(f);
 
-//            ofLog()<<"face_center: "<< face[data.id].center;
-//            ofLog()<<"face_width: "<< face[data.id].width;
-//            ofLog()<<"face_height: "<< face[data.id].height;
+            //            ofLog()<<"face_center: "<< face[data.id].center;
+            //            ofLog()<<"face_width: "<< face[data.id].width;
+            //            ofLog()<<"face_height: "<< face[data.id].height;
 
             HogTool::SaliencyRange s;
             s.center = face[data.id].center;
@@ -95,9 +97,9 @@ void ofApp::update(){
             s.height = face[data.id].height * SALIENCY_RANGE;
             saliencyRange.push_back(s);
 
-//            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
-//            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
-//            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
+            //            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
+            //            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
+            //            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
 
             cv::Rect _s;
             _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
@@ -108,10 +110,10 @@ void ofApp::update(){
 
             cv::rectangle(frame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
 
-//            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
-//            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
-//            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
-//            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
+            //            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
+            //            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
+            //            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
+            //            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
         }
 
         saliencyAlgorithm(frame);
@@ -148,7 +150,7 @@ void ofApp::update(){
         for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
             cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
         }
-//        saliencyMap_conv.copyTo(result,mask);
+        //        saliencyMap_conv.copyTo(result,mask);
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, cv::COLORMAP_JET );
@@ -179,12 +181,12 @@ void ofApp::draw(){
             break;
 
         case debug:
-            player.draw(0, 0, 640, 360);
-            ofxCv::drawMat(frame, 640, 0, 640, 360);
+            player.draw(0, 0, ofGetWidth()/2, ofGetHeight()/2);
+            ofxCv::drawMat(frame, 640, 0, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-            ofxCv::drawMat(saliencyMap_conv, 0, 360, 640, 360);
+            ofxCv::drawMat(saliencyMap_conv, 0, 360, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-            ofxCv::drawMat(saliencyMap_color, 640, 360, 640, 360);
+            ofxCv::drawMat(saliencyMap_color, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
             // FPS表示
             ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 1200, 20);
             break;
@@ -194,9 +196,9 @@ void ofApp::draw(){
     if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
     if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
-    face.clear();
-    saliencyRange.clear();
-    saliencyRect.clear();
+    if(!face.empty()) { face.clear(); }
+    if(!saliencyRange.empty()) { saliencyRange.clear(); }
+    if(!saliencyRect.empty()) { saliencyRect.clear(); }
     
     // ofxSyphon: すべて送信
     //    mainOutputSyphonServer.publishScreen();
