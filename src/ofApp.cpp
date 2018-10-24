@@ -67,7 +67,7 @@ void ofApp::update(){
         frame = ofxCv::toCv(player).clone();
         // 画質を半分に下げる
         cv::pyrDown(frame.clone(), frame);
-//        cv::pyrDown(frame.clone(), frame);
+        //        cv::pyrDown(frame.clone(), frame);
 
         hogData = hog.multiUpdate(frame);
         
@@ -148,7 +148,12 @@ void ofApp::update(){
         // saliency適応範囲以外をマスク
         mask = cv::Mat::zeros(saliencyMap_conv.cols, saliencyMap_conv.rows, CV_8UC3);
         for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
+            ofLog()<<"saliencyRect_x: "<< saliencyRect[i].x;
+            ofLog()<<"saliencyRect_y: "<< saliencyRect[i].y;
+            ofLog()<<"saliencyRect_height: "<< saliencyRect[i].height;
+            ofLog()<<"saliencyRect_width: "<< saliencyRect[i].width;
+            cv::rectangle(mask, cv::Point(saliencyRect[i].x, saliencyRect[i].y), cv::Point(saliencyRect[i].width, saliencyRect[i].height), cv::Scalar(255, 255, 255), -1, CV_8UC3);
+//            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255));
         }
         //        saliencyMap_conv.copyTo(result,mask);
 
@@ -177,7 +182,7 @@ void ofApp::draw(){
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
             //            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
-            ofxCv::drawMat(frame, 0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat(mask, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case debug:
@@ -186,7 +191,7 @@ void ofApp::draw(){
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap_conv, 0, 360, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力
-            ofxCv::drawMat(saliencyMap_color, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
+            ofxCv::drawMat(mask, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
             // FPS表示
             ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 1200, 20);
             break;
