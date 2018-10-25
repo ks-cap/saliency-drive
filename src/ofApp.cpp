@@ -10,7 +10,7 @@
 void ofApp::setup(){
 
     // 背景色: White
-    ofBackground( 255, 255, 255 );
+    ofBackground(255, 255, 255);
 
     // 10*10の顕著マップの最小値の場所
     widthMin = 0;
@@ -26,7 +26,7 @@ void ofApp::setup(){
 
     // 動画の読み込み
     ofSetVerticalSync(true);
-
+    // Hogのサンプルデータ読み込み
     hog.loadMultiSVM(ofToDataPath("face_detector.svm"));
 
     //---------------------   Camera   -----------------------------
@@ -67,18 +67,19 @@ void ofApp::update(){
         frame = ofxCv::toCv(player).clone();
         // 画質を半分に下げる
         cv::pyrDown(frame.clone(), frame);
-        //        cv::pyrDown(frame.clone(), frame);
 
         hogData = hog.multiUpdate(frame);
         
         for (auto data : hogData) {
             cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
 
-                        ofLog()<<"rect_x: "<< data.rect.x;
-                        ofLog()<<"rect_y: "<< data.rect.y;
-                        ofLog()<<"rect_widht: "<< data.rect.width;
-                        ofLog()<<"rect_height: "<< data.rect.height;
+            ss = data.rect;
+            ofLog()<<"rect"<<"["<<data.id<<"].x: "<< data.rect.x;
+            ofLog()<<"rect"<<"["<<data.id<<"].y: "<< data.rect.y;
+            ofLog()<<"rect"<<"["<<data.id<<"].width: "<< data.rect.width;
+            ofLog()<<"rect"<<"["<<data.id<<"].height: "<< data.rect.height;
 
+            // 顔の矩形
             ofRectangle rectangle = ofxCv::toOf(data.rect);
 
             HogTool::Face f;
@@ -87,19 +88,19 @@ void ofApp::update(){
             f.height = rectangle.getHeight();
             face.push_back(f);
 
-            //            ofLog()<<"face_center: "<< face[data.id].center;
-            //            ofLog()<<"face_width: "<< face[data.id].width;
-            //            ofLog()<<"face_height: "<< face[data.id].height;
+            //            ofLog()<<"face.center: "<< face[data.id].center;
+            //            ofLog()<<"face.width: "<< face[data.id].width;
+            //            ofLog()<<"face.height: "<< face[data.id].height;
 
             HogTool::SaliencyRange s;
             s.center = face[data.id].center;
             s.width = face[data.id].width * SALIENCY_RANGE;
             s.height = face[data.id].height * SALIENCY_RANGE;
             saliencyRange.push_back(s);
-
-            //            ofLog()<<"saliencyRange_center: "<< saliencyRange[data.id].center;
-            //            ofLog()<<"saliencyRange_width: "<< saliencyRange[data.id].width;
-            //            ofLog()<<"saliencyRange_height: "<< saliencyRange[data.id].height;
+            //
+            //            ofLog()<<"saliencyRange.center: "<< saliencyRange[data.id].center;
+            //            ofLog()<<"saliencyRange.width: "<< saliencyRange[data.id].width;
+            //            ofLog()<<"saliencyRange.height: "<< saliencyRange[data.id].height;
 
             cv::Rect _s;
             _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
@@ -110,10 +111,11 @@ void ofApp::update(){
 
             cv::rectangle(frame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
 
-            //            ofLog()<<"saliencyRect_x: "<< saliencyRect[data.id].x;
-            //            ofLog()<<"saliencyRect_y: "<< saliencyRect[data.id].y;
-            //            ofLog()<<"saliencyRect_height: "<< saliencyRect[data.id].height;
-            //            ofLog()<<"saliencyRect_width: "<< saliencyRect[data.id].width;
+            ofLog()<<"saliencyRect"<<"["<<data.id<<"].x: "<< saliencyRect[data.id].x;
+            ofLog()<<"saliencyRect"<<"["<<data.id<<"].y: "<< saliencyRect[data.id].y;
+            ofLog()<<"saliencyRect"<<"["<<data.id<<"].width: "<< saliencyRect[data.id].width;
+            ofLog()<<"saliencyRect"<<"["<<data.id<<"].height: "<< saliencyRect[data.id].height;
+            //            printf("---------------------------------\n");
         }
 
         saliencyAlgorithm(frame);
@@ -146,17 +148,22 @@ void ofApp::update(){
         }
 
         // saliency適応範囲以外をマスク
-        mask = cv::Mat::zeros(saliencyMap_conv.cols, saliencyMap_conv.rows, CV_8UC3);
+        mask = cv::Mat::zeros(saliencyMap_conv.rows, saliencyMap_conv.cols, CV_8UC1);
+        
+        ofLog()<<"saliencyMap_conv.channels: "<< saliencyMap_conv.channels();
+        ofLog()<<"mask.channels: "<< mask.channels();
+
         for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-            ofLog()<<"saliencyRect_x: "<< saliencyRect[i].x;
-            ofLog()<<"saliencyRect_y: "<< saliencyRect[i].y;
-            ofLog()<<"saliencyRect_height: "<< saliencyRect[i].height;
-            ofLog()<<"saliencyRect_width: "<< saliencyRect[i].width;
-//            cv::rectangle(mask, cv::Point(saliencyRect[i].x, saliencyRect[i].y), cv::Point(saliencyRect[i].width, saliencyRect[i].height), cv::Scalar(255, 255, 255), -1, CV_8UC3);
-            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
+            ofLog()<<"_saliencyRect"<<"["<<i<<"].x: "<< saliencyRect[i].x;
+            ofLog()<<"_saliencyRect"<<"["<<i<<"].y: " <<  saliencyRect[i].y;
+            ofLog()<<"_saliencyRect_width"<<"["<<i<<"].width: "<<  saliencyRect[i].width;
+            ofLog()<<"_saliencyRect_height"<<"["<<i<<"].height: "<<  saliencyRect[i].height;
+            printf("---------------------------------\n");
+            //            cv::rectangle(mask, cv::Point(saliencyRect[i].x, saliencyRect[i].y), cv::Point(saliencyRect[i].width, saliencyRect[i].height), cv::Scalar(255, 255, 255), -1, CV_8UC3);
+                cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
         }
         // error: (-215:Assertion failed) mask.depth() == 0 && (mcn == 1 || mcn == cn) in function 'copyTo'
-//        saliencyMap_conv.copyTo(result,mask);
+                saliencyMap_conv.copyTo(result,mask);
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, cv::COLORMAP_JET );
@@ -182,7 +189,7 @@ void ofApp::draw(){
 
         case preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-            //            ofxCv::drawMat( frame, 0, 0, ofGetWidth(),ofGetHeight());
+            //            ofxCv::drawMat( saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
             ofxCv::drawMat(mask, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
@@ -193,7 +200,7 @@ void ofApp::draw(){
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap_conv, 0, 360, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-            ofxCv::drawMat(mask, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
+            ofxCv::drawMat(result, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
 
             // Label
             ofDrawBitmapStringHighlight("original", 20,20);

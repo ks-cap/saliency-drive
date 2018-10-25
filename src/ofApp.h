@@ -102,6 +102,7 @@ private:
     // Saliency適応範囲
     std::vector<HogTool::SaliencyRange> saliencyRange;
     // Saliencyの矩形
+    cv::Rect ss;
     std::vector<cv::Rect> saliencyRect;
     
     std::vector<HogTool::FHogData> hogData;
