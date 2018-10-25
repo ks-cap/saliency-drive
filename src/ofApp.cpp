@@ -275,7 +275,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
         // 処理領域を設定
         int height = 0;
         int minPixels = 0;
-        //        int count = imgDraw ? 10 : 5;
+
 
         for (int heightCount = 0; heightCount < HEIGHTCOUNT; ++heightCount) {
             int width = 0;
@@ -293,14 +293,14 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                     }
                 }
 
-//                pixels.push_back(pixel);
+                //                pixels.push_back(pixel);
                 // 最小値の値とその場所を更新
                 if ((heightCount == 0 && widthCount == 0) || pixel < minPixels) {
                     minPixels = pixel;
                     minPlace.widthMin = width;
                     minPlace.heightMin = height;
                 }
-                //        }
+
                 width += saliencyMap_conv.cols / WIDTHCOUNT;
             }
             height += saliencyMap_conv.rows / HEIGHTCOUNT;
