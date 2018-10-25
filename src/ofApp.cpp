@@ -4,7 +4,7 @@
 #define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
 #define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
 
-#define SALIENCY_RANGE 2
+#define SALIENCY_RANGE 2.5
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -101,7 +101,7 @@ void ofApp::update(){
             //            ofLog()<<"saliencyRange.center: "<< saliencyRange[data.id].center;
             //            ofLog()<<"saliencyRange.width: "<< saliencyRange[data.id].width;
             //            ofLog()<<"saliencyRange.height: "<< saliencyRange[data.id].height;
-
+            // printf("---------------------------------\n");
             cv::Rect _s;
             _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
             _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
@@ -127,7 +127,6 @@ void ofApp::update(){
         //            ofPixels & pixels = vidGrabber.getPixels();
 
         //            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
-
         //--------------------------------------------------------------
 
         // 最小と最大の要素値とそれらの位置を求める
@@ -148,25 +147,19 @@ void ofApp::update(){
         }
 
         // saliency適応範囲以外をマスク
+        result = cv::Mat();
         mask = cv::Mat::zeros(saliencyMap_conv.rows, saliencyMap_conv.cols, CV_8UC1);
         
         ofLog()<<"saliencyMap_conv.channels: "<< saliencyMap_conv.channels();
         ofLog()<<"mask.channels: "<< mask.channels();
 
         for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-            ofLog()<<"_saliencyRect"<<"["<<i<<"].x: "<< saliencyRect[i].x;
-            ofLog()<<"_saliencyRect"<<"["<<i<<"].y: " <<  saliencyRect[i].y;
-            ofLog()<<"_saliencyRect_width"<<"["<<i<<"].width: "<<  saliencyRect[i].width;
-            ofLog()<<"_saliencyRect_height"<<"["<<i<<"].height: "<<  saliencyRect[i].height;
-            printf("---------------------------------\n");
-            //            cv::rectangle(mask, cv::Point(saliencyRect[i].x, saliencyRect[i].y), cv::Point(saliencyRect[i].width, saliencyRect[i].height), cv::Scalar(255, 255, 255), -1, CV_8UC3);
-                cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
+            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
         }
-        // error: (-215:Assertion failed) mask.depth() == 0 && (mcn == 1 || mcn == cn) in function 'copyTo'
-                saliencyMap_conv.copyTo(result,mask);
 
+        saliencyMap_conv.copyTo(result, mask.clone());
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
-        applyColorMap( saliencyMap_conv.clone(), saliencyMap_color, cv::COLORMAP_JET );
+        applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
 
     }
 
@@ -178,7 +171,6 @@ void ofApp::draw(){
     //---------------------   Camera   -----------------------------
     //    ofSetHexColor(0xffffff);
     //    vidGrabber.draw(0, 0, 640, 360 );
-
     //--------------------------------------------------------------
 
     // 出力（動画）
@@ -188,9 +180,8 @@ void ofApp::draw(){
             break;
 
         case preRelease:
-            // 顕著性マップ(SPECTRAL_RESIDUAL:カラーマップ)を出力: Debug用
-            //            ofxCv::drawMat( saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
-            ofxCv::drawMat(mask, 0, 0, ofGetWidth(),ofGetHeight());
+            // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力: Debug用
+            ofxCv::drawMat(saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case debug:
@@ -199,8 +190,8 @@ void ofApp::draw(){
             ofxCv::drawMat(frame, 640, 0, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap_conv, 0, 360, ofGetWidth()/2, ofGetHeight()/2);
-            // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
-            ofxCv::drawMat(result, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
+            // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力
+            ofxCv::drawMat(saliencyMap_color, 640, 360, ofGetWidth()/2, ofGetHeight()/2);
 
             // Label
             ofDrawBitmapStringHighlight("original", 20,20);
@@ -216,6 +207,7 @@ void ofApp::draw(){
     if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
     if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
+    // データの初期化
     if(!face.empty()) { face.clear(); }
     if(!saliencyRange.empty()) { saliencyRange.clear(); }
     if(!saliencyRect.empty()) { saliencyRect.clear(); }

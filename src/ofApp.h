@@ -64,8 +64,9 @@ private:
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
     // 顕著性マップ
     cv::Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
-    // 顕著性マップ + マスク処理
+    // マスク処理
     cv::Mat mask;
+    // 顕著性マップ + マスク処理
     cv::Mat result;
 
     // 10*10の顕著マップの最小値の場所
