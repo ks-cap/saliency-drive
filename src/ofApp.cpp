@@ -6,6 +6,9 @@
 
 #define SALIENCY_RANGE 2.5
 
+#define WIDTHCOUNT 5
+#define HEIGHTCOUNT 3
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -13,8 +16,8 @@ void ofApp::setup(){
     ofBackground(255, 255, 255);
 
     // 10*10の顕著マップの最小値の場所
-    widthMin = 0;
-    heightMin = 0;
+    minPlace.widthMin = 0;
+    minPlace.heightMin = 0;
 
     // 1回目と判定
     firstFrameCheck = true;
@@ -73,7 +76,6 @@ void ofApp::update(){
         for (auto data : hogData) {
             cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
 
-            ss = data.rect;
             ofLog()<<"rect"<<"["<<data.id<<"].x: "<< data.rect.x;
             ofLog()<<"rect"<<"["<<data.id<<"].y: "<< data.rect.y;
             ofLog()<<"rect"<<"["<<data.id<<"].width: "<< data.rect.width;
@@ -130,7 +132,9 @@ void ofApp::update(){
         //--------------------------------------------------------------
 
         // 最小と最大の要素値とそれらの位置を求める
-        //    minMaxLoc(saliencyMap_conv, &min_val, &max_val, &min_loc, &max_loc, Mat());
+        minMaxLoc(saliencyMap_conv, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
+        ofLog()<<"minMaxLoc.min_val: "<<minMax.min_val;
+        ofLog()<<"minMaxLoc.min_loc: "<<minMax.min_loc;
 
         // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
         saliencyCheck(firstFrameCheck);
@@ -161,6 +165,7 @@ void ofApp::update(){
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
 
+        printf("----------------------------------------------------");
     }
 
 }
@@ -204,8 +209,8 @@ void ofApp::draw(){
     }
 
     // UI画像
-    if ( imgDraw ){ outputOfImg.draw( widthMin, heightMin ); }
-    if ( mapDraw ){ player_map.draw( widthMin, heightMin, ofGetWidth()/5, ofGetHeight()/5); }
+    if ( imgDraw ){ outputOfImg.draw( minPlace.widthMin, minPlace.heightMin ); }
+    if ( mapDraw ){ player_map.draw( minPlace.widthMin, minPlace.heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
     // データの初期化
     if(!face.empty()) { face.clear(); }
@@ -216,13 +221,15 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
-    cv::Mat mat_gray;
+    cv::Mat mat_gray, mat_gaus;
     // 白黒加工
-    cv::cvtColor( mat.clone(), mat_gray, cv::COLOR_BGR2GRAY );
+    cv::cvtColor(mat.clone(), mat_gray, cv::COLOR_BGR2GRAY);
+    // ぼかし
+    cv::GaussianBlur(mat_gray.clone(), mat_gaus, cv::Size(5, 5), 0, 0);
     // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム)
     cv::Ptr<cv::saliency::Saliency> saliencyAlgorithm;
     saliencyAlgorithm = cv::saliency::StaticSaliencySpectralResidual::create();
-    saliencyAlgorithm->computeSaliency( mat_gray.clone(), saliencyMap );
+    saliencyAlgorithm->computeSaliency( mat_gaus.clone(), saliencyMap );
 
     // アルファチャンネルの正規化を行う
     cv::normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX );
@@ -239,7 +246,7 @@ bool ofApp::saliencyCheck(bool checkUI){
         // 今は firstFrameCheck で条件を発火させ, ボタンを押した直後は入らないようにしている
         int count = imgDraw ? 10 : 5;
         // 前回の顕著性マップで顕著性が低かったピクセルのうちの一つ
-        cv::Rect roi(widthMin, heightMin, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
+        cv::Rect roi(minPlace.widthMin, minPlace.heightMin, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
         cv::Mat saliency_roi = saliencyMap_conv(roi);
         int pixels = 0;
         // 10*10のうちの一つの画素値(count: 9216回 * 42.5(255/6))
@@ -264,38 +271,39 @@ bool ofApp::saliencyCheck(bool checkUI){
 //--------------------------------------------------------------
 void ofApp::algorithmMinPixels(bool checkPixels){
 
-    if ( checkPixels ){
+    if (checkPixels) {
         // 処理領域を設定
         int height = 0;
         int minPixels = 0;
-        int count = imgDraw ? 10 : 5;
+        //        int count = imgDraw ? 10 : 5;
 
-        for( int heightCount = 0; heightCount < count; ++heightCount ){
+        for (int heightCount = 0; heightCount < HEIGHTCOUNT; ++heightCount) {
             int width = 0;
-            for( int widthCount = 0; widthCount < count; ++widthCount ){
-                // 道路にUIを出さないよう条件分岐
-                //        if ( heightCount<4 || ( heightCount>=4 && ( widthCount<2 || widthCount>8 ) ) ) {
-                cv::Rect roi(width, height, saliencyMap_conv.cols / count, saliencyMap_conv.rows / count);
+            for (int widthCount = 0; widthCount < WIDTHCOUNT; ++widthCount) {
+                //                ofLog()<<"saliencyMap_convs/5 : "<< saliencyMap_conv.cols / WIDTHCOUNT;
+                //                ofLog()<<"saliencyMap_rows/3 : "<< saliencyMap_conv.rows / HEIGHTCOUNT;
+                cv::Rect roi(width, height, saliencyMap_conv.cols / WIDTHCOUNT, saliencyMap_conv.rows / HEIGHTCOUNT);
                 cv::Mat saliency_roi = saliencyMap_conv(roi);
 
-                // 10*10(5*5)のうちの一つの画素値
-                int pixels = 0;
-                for( int y = 0; y < saliency_roi.cols; ++y ){
-                    for( int x = 0; x < saliency_roi.rows; ++x ){
-                        pixels += (int)saliency_roi.at<uchar>( x, y );
+                // 大きな範囲のうちの一箇所の画素値の合計
+                int pixel = 0;
+                for (int y = 0; y < saliency_roi.cols; ++y) {
+                    for(int x = 0; x < saliency_roi.rows; ++x){
+                        pixel += (int)saliency_roi.at<uchar>(x, y);
                     }
                 }
 
+//                pixels.push_back(pixel);
                 // 最小値の値とその場所を更新
-                if ( ( heightCount == 0 && widthCount == 0 ) || pixels < minPixels ) {
-                    minPixels = pixels;
-                    widthMin = width;
-                    heightMin = height;
+                if ((heightCount == 0 && widthCount == 0) || pixel < minPixels) {
+                    minPixels = pixel;
+                    minPlace.widthMin = width;
+                    minPlace.heightMin = height;
                 }
                 //        }
-                width += saliencyMap_conv.cols / count;
+                width += saliencyMap_conv.cols / WIDTHCOUNT;
             }
-            height += saliencyMap_conv.rows / count;
+            height += saliencyMap_conv.rows / HEIGHTCOUNT;
         }
     }
 

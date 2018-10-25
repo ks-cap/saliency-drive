@@ -55,10 +55,9 @@ private:
     int camWidth, camHeight;
     
     // 最小と最大の要素値とそれらの位置
-//    SaliencyTool::MinMax minMax;
-
-    cv::Point min_loc, max_loc;
-    double min_val, max_val;
+    
+    SaliencyTool::MinMax minMax;
+    
     
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
@@ -68,9 +67,9 @@ private:
     cv::Mat mask;
     // 顕著性マップ + マスク処理
     cv::Mat result;
-
+    
     // 10*10の顕著マップの最小値の場所
-    int widthMin, heightMin;
+    SaliencyTool::MinPlace minPlace;
     // 2回目以降の条件を分けるため
     bool firstFrameCheck;
     // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
@@ -103,7 +102,6 @@ private:
     // Saliency適応範囲
     std::vector<HogTool::SaliencyRange> saliencyRange;
     // Saliencyの矩形
-    cv::Rect ss;
     std::vector<cv::Rect> saliencyRect;
     
     std::vector<HogTool::FHogData> hogData;
