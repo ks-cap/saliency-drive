@@ -15,6 +15,7 @@
 #include "ofxDLib.h"
 #include "hogTools.hpp"
 #include "saliencyTools.hpp"
+#include "consts.hpp"
 
 class ofApp : public ofBaseApp{
     
@@ -77,21 +78,7 @@ private:
     // どちらを描画するか：画像（Picture）か動画（Map）か
     bool imgDraw, mapDraw;
     
-    // ファイルの拡張子
-    enum File {
-        png,
-        mov,
-        mp4,
-        none
-    };
-    
-    // 環境指定
-    enum Use {
-        release,
-        preRelease,
-        debug
-    };
-    enum Use use;
+    enum Consts::Use use;
     
     cv::Mat frame;
     cv::Mat downFrame;

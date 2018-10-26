@@ -29,6 +29,7 @@
 		856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9604B925D32EE39065747725 /* ofxBaseGui.cpp */; };
 		A6668C5B1272D7FCD5B5A16F /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CEC50DB3D06414010233963 /* Utilities.cpp */; };
 		B2035A582180E06B00290063 /* saliencyTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2035A562180E06B00290063 /* saliencyTools.cpp */; };
+		B2035A652182EEB900290063 /* consts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2035A632182EEB900290063 /* consts.cpp */; };
 		B266578FC55D23BFEBC042E7 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */; };
 		B35D6B64A6432B843D2D51F1 /* ofxCvImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA92DA47B3F43A8FAACBEBCB /* ofxCvImage.cpp */; };
 		B56FE57CC35806596D38118C /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 802251BAF1B35B1D67B32FD0 /* ofxSliderGroup.cpp */; };
@@ -360,6 +361,8 @@
 		B1DEA9001EEA4D51EC50854B /* track_alov.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = track_alov.hpp; path = "../../../addons/ofxOpenCv-contrib/libs/opencv/include/opencv2/datasets/track_alov.hpp"; sourceTree = SOURCE_ROOT; };
 		B2035A562180E06B00290063 /* saliencyTools.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = saliencyTools.cpp; sourceTree = "<group>"; };
 		B2035A572180E06B00290063 /* saliencyTools.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = saliencyTools.hpp; sourceTree = "<group>"; };
+		B2035A632182EEB900290063 /* consts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = consts.cpp; sourceTree = "<group>"; };
+		B2035A642182EEB900290063 /* consts.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = consts.hpp; sourceTree = "<group>"; };
 		B2799BD36796919F2D118C41 /* msm_middlebury.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = msm_middlebury.hpp; path = "../../../addons/ofxOpenCv-contrib/libs/opencv/include/opencv2/datasets/msm_middlebury.hpp"; sourceTree = SOURCE_ROOT; };
 		B2C04E1D0F65EB4487E954DB /* FaceTracker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = FaceTracker.cpp; path = ../../../addons/ofxDlib/src/FaceTracker.cpp; sourceTree = SOURCE_ROOT; };
 		B2DF3B454C62195174325419 /* saliencySpecializedClasses.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = saliencySpecializedClasses.hpp; path = "../../../addons/ofxOpenCv-contrib/libs/opencv/include/opencv2/saliency/saliencySpecializedClasses.hpp"; sourceTree = SOURCE_ROOT; };
@@ -1418,6 +1421,8 @@
 				262AF048532C50E7016E855C /* hogTools.cpp */,
 				B2035A562180E06B00290063 /* saliencyTools.cpp */,
 				B2035A572180E06B00290063 /* saliencyTools.hpp */,
+				B2035A632182EEB900290063 /* consts.cpp */,
+				B2035A642182EEB900290063 /* consts.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1621,6 +1626,7 @@
 				B2035A582180E06B00290063 /* saliencyTools.cpp in Sources */,
 				28DDCC3C37095685A300A612 /* ofxCvHaarFinder.cpp in Sources */,
 				B35D6B64A6432B843D2D51F1 /* ofxCvImage.cpp in Sources */,
+				B2035A652182EEB900290063 /* consts.cpp in Sources */,
 				67180F4C27A540DBD2099A70 /* ofxCvFloatImage.cpp in Sources */,
 				FFF22CE91BA6E19DA38EC4DA /* ofxCvGrayscaleImage.cpp in Sources */,
 			);

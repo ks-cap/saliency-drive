@@ -171,16 +171,16 @@ void ofApp::draw(){
 
     // 出力（動画）
     switch (use) {
-        case release:
+        case Consts::release:
             player.draw(0, 0, ofGetWidth(),ofGetHeight());
             break;
 
-        case preRelease:
+        case Consts::preRelease:
             // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力: Debug用
             ofxCv::drawMat(saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
-        case debug:
+        case Consts::debug:
             player.draw(0, 0, ofGetWidth()/2, ofGetHeight()/2);
             // 顔検知出力(Hog)
             ofxCv::drawMat(downFrame, 640, 0, ofGetWidth()/2, ofGetHeight()/2);
@@ -329,105 +329,105 @@ void ofApp::keyPressed(int key){
     // 条件を発火させ, ボタンを押した直後は saliencyCheck 関数に入らないようにしている
     firstFrameCheck = true;
 
-    enum File file;
+    enum Consts::File file;
     
     switch (key) {
             //-------------   UI   ------------------
             // "1"を押した時 単純形状表示
         case 49:
             inputOfImg.load("circle.png");
-            file = png;
+            file = Consts::png;
             break;
             // "2"を押した時 道路の標識（速度制限）表示
         case 50:
             inputOfImg.load("roadSign_speed.png");
-            file = png;
+            file = Consts::png;
             break;
             // "3"を押した時 道路の標識（停止）表示
         case 51:
             inputOfImg.load("roadSign_stop.png");
-            file = png;
+            file = Consts::png;
             break;
             // "4"を押した時: メールのアイコン表示
         case 52:
             inputOfImg.load("icon_mail.png");
-            file = png;
+            file = Consts::png;
             break;
             // "5"を押した時: マップ表示
         case 53:
             inputOfImg.load("string.png");
-            file = png;
+            file = Consts::png;
             break;
             // "6"を押した時: マップ表示
         case 54:
             player_map.load("movie_map.mov");
-            file = mov;
+            file = Consts::mov;
             break;
             // "7"を押した時 道路の標識（速度制限）表示: 半透明
         case 55:
             inputOfImg.load("roadSign_speed2.png");
-            file = png;
+            file = Consts::png;
             break;
             //-------------   動画データ   ------------------
             // "A"を押した時: 昼のドライブ映像
         case 97:
             player.load("driver_daytime.mp4");
-            file = mp4;
+            file = Consts::mp4;
             player.play();
             break;
             // "S"を押した時: 夜のドライブ映像
         case 115:
             player.load("driver_night.mp4");
-            file = mp4;
+            file = Consts::mp4;
             player.play();
             break;
             // "D"を押した時: サンプル映像
         case 100:
             player.load("sampleMovie.mov");
-            file = mp4;
+            file = Consts::mp4;
             player.play();
             break;
 
             //-------------   環境   ------------------
             // "Z"を押した時: release
         case 122:
-            use = release;
+            use = Consts::release;
             break;
             // "X"を押した時: preRelease
         case 120:
-            use = preRelease;
+            use = Consts::preRelease;
             break;
             // "C"を押した時: debug
         case 99:
-            use = debug;
+            use = Consts::debug;
             break;
 
             //-------------------------------
             // "-"を押した時: 終了
         case 59:
-            file = none;
+            file = Consts::none;
             player.stop();
             break;
             // 上記以外のボタンを押した時
         default:
-            file = none;
+            file = Consts::none;
             break;
     }
 
     switch (file) {
-        case png:
+        case Consts::png:
             imgDraw = true;
             mapDraw = false;
             break;
-        case mov:
+        case Consts::mov:
             imgDraw = false;
             mapDraw = true;
             break;
-        case mp4:
+        case Consts::mp4:
             imgDraw = false;
             mapDraw = false;
             break;
-        case none:
+        case Consts::none:
             imgDraw = false;
             mapDraw = false;
             break;
