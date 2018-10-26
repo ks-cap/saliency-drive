@@ -69,20 +69,20 @@ void ofApp::update(){
         // Mat変換
         frame = ofxCv::toCv(player).clone();
         // 画質を半分に下げる
-        cv::pyrDown(frame.clone(), frame);
+        cv::pyrDown(frame.clone(), downFrame);
 
-        hogData = hog.multiUpdate(frame);
+        hogData = hog.multiUpdate(downFrame);
         
         for (auto data : hogData) {
-            cv::rectangle(frame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
-
-            ofLog()<<"rect"<<"["<<data.id<<"].x: "<< data.rect.x;
-            ofLog()<<"rect"<<"["<<data.id<<"].y: "<< data.rect.y;
-            ofLog()<<"rect"<<"["<<data.id<<"].width: "<< data.rect.width;
-            ofLog()<<"rect"<<"["<<data.id<<"].height: "<< data.rect.height;
+            cv::rectangle(downFrame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+            cv::Rect rect = data.rect;
+            ofLog()<<"rect"<<"["<<data.id<<"].x: "<< rect.x;
+            ofLog()<<"rect"<<"["<<data.id<<"].y: "<< rect.y;
+            ofLog()<<"rect"<<"["<<data.id<<"].width: "<< rect.width;
+            ofLog()<<"rect"<<"["<<data.id<<"].height: "<< rect.height;
 
             // 顔の矩形
-            ofRectangle rectangle = ofxCv::toOf(data.rect);
+            ofRectangle rectangle = ofxCv::toOf(rect);
 
             HogTool::Face f;
             f.center += rectangle.getCenter();
@@ -100,10 +100,10 @@ void ofApp::update(){
             s.height = face[data.id].height * SALIENCY_RANGE;
             saliencyRange.push_back(s);
             //
-            //            ofLog()<<"saliencyRange.center: "<< saliencyRange[data.id].center;
-            //            ofLog()<<"saliencyRange.width: "<< saliencyRange[data.id].width;
-            //            ofLog()<<"saliencyRange.height: "<< saliencyRange[data.id].height;
-            // printf("---------------------------------\n");
+//            ofLog()<<"saliencyRange.center: "<< saliencyRange[data.id].center;
+//            ofLog()<<"saliencyRange.width: "<< saliencyRange[data.id].width;
+//            ofLog()<<"saliencyRange.height: "<< saliencyRange[data.id].height;
+
             cv::Rect _s;
             _s.x = saliencyRange[data.id].center.x - (saliencyRange[data.id].width / 2);
             _s.y = saliencyRange[data.id].center.y - (saliencyRange[data.id].height / 2);
@@ -111,7 +111,7 @@ void ofApp::update(){
             _s.width = saliencyRange[data.id].width;
             saliencyRect.push_back(_s);
 
-            cv::rectangle(frame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
+            cv::rectangle(downFrame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
 
             ofLog()<<"saliencyRect"<<"["<<data.id<<"].x: "<< saliencyRect[data.id].x;
             ofLog()<<"saliencyRect"<<"["<<data.id<<"].y: "<< saliencyRect[data.id].y;
@@ -120,7 +120,7 @@ void ofApp::update(){
             //            printf("---------------------------------\n");
         }
 
-        saliencyAlgorithm(frame);
+        saliencyAlgorithm(downFrame);
 
         //---------------------   Camera   -----------------------------
         //          vidGrabber.update();
@@ -132,14 +132,14 @@ void ofApp::update(){
         //--------------------------------------------------------------
 
         // 最小と最大の要素値とそれらの位置を求める
-        minMaxLoc(saliencyMap_conv, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
-        ofLog()<<"minMaxLoc.min_val: "<<minMax.min_val;
-        ofLog()<<"minMaxLoc.min_loc: "<<minMax.min_loc;
+//        minMaxLoc(saliencyMap_conv, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
+//        ofLog()<<"minMaxLoc.min_val: "<<minMax.min_val;
+//        ofLog()<<"minMaxLoc.min_loc: "<<minMax.min_loc;
 
         // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
-        saliencyCheck(firstFrameCheck);
+//        saliencyCheck(firstFrameCheck);
 
-        // 10*10のうちの画素最小値の場所を取得
+        // 5*3のうちの画素最小値の場所を取得
         algorithmMinPixels(algorithmCheck);
 
         // 画素値の反転（現状 : 0:黒:顕著性が低い, 255:白:顕著性が高い）
@@ -150,22 +150,13 @@ void ofApp::update(){
             }
         }
 
-        // saliency適応範囲以外をマスク
-        result = cv::Mat();
-        mask = cv::Mat::zeros(saliencyMap_conv.rows, saliencyMap_conv.cols, CV_8UC1);
-        
-        ofLog()<<"saliencyMap_conv.channels: "<< saliencyMap_conv.channels();
-        ofLog()<<"mask.channels: "<< mask.channels();
+        // マスク処理
+        saliencyMask();
 
-        for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-            cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
-        }
-
-        saliencyMap_conv.copyTo(result, mask.clone());
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
 
-        printf("----------------------------------------------------");
+        printf("----------------------------------------------------\n");
     }
 
 }
@@ -192,7 +183,7 @@ void ofApp::draw(){
         case debug:
             player.draw(0, 0, ofGetWidth()/2, ofGetHeight()/2);
             // 顔検知出力(Hog)
-            ofxCv::drawMat(frame, 640, 0, ofGetWidth()/2, ofGetHeight()/2);
+            ofxCv::drawMat(downFrame, 640, 0, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap_conv, 0, 360, ofGetWidth()/2, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力
@@ -229,7 +220,7 @@ cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
     // SPECTRAL_RESIDUAL(顕著性マップを求めるアルゴリズム)
     cv::Ptr<cv::saliency::Saliency> saliencyAlgorithm;
     saliencyAlgorithm = cv::saliency::StaticSaliencySpectralResidual::create();
-    saliencyAlgorithm->computeSaliency( mat_gaus.clone(), saliencyMap );
+    saliencyAlgorithm->computeSaliency(mat_gaus.clone(), saliencyMap);
 
     // アルファチャンネルの正規化を行う
     cv::normalize( saliencyMap.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX );
@@ -292,8 +283,6 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                         pixel += (int)saliency_roi.at<uchar>(x, y);
                     }
                 }
-
-                //                pixels.push_back(pixel);
                 // 最小値の値とその場所を更新
                 if ((heightCount == 0 && widthCount == 0) || pixel < minPixels) {
                     minPixels = pixel;
@@ -301,12 +290,36 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                     minPlace.heightMin = height;
                 }
 
+                pixels.push_back(pixel);
+
                 width += saliencyMap_conv.cols / WIDTHCOUNT;
             }
             height += saliencyMap_conv.rows / HEIGHTCOUNT;
         }
+
+        for (auto p : pixels) {
+            ofLogNotice()<<"pixel: "<<p;
+        }
+
     }
 
+
+}
+
+//--------------------------------------------------------------
+void ofApp::saliencyMask(){
+    // saliency適応範囲以外をマスク
+    result = cv::Mat();
+    mask = cv::Mat::zeros(saliencyMap_conv.rows, saliencyMap_conv.cols, CV_8UC1);
+
+    ofLog()<<"saliencyMap_conv.channels: "<< saliencyMap_conv.channels();
+    ofLog()<<"mask.channels: "<< mask.channels();
+
+    for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
+        cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
+    }
+
+    saliencyMap_conv.copyTo(result, mask.clone());
 }
 
 //--------------------------------------------------------------

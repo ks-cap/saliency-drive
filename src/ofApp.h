@@ -29,7 +29,7 @@ private:
     
     bool saliencyCheck(bool checkUI);
     void algorithmMinPixels(bool checkPixels);
-    
+    void saliencyMask();
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -55,10 +55,9 @@ private:
     int camWidth, camHeight;
     
     // 最小と最大の要素値とそれらの位置
-    
-    SaliencyTool::MinMax minMax;
-    
-    
+//    SaliencyTool::MinMax minMax;
+    std::vector<int> pixels;
+
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
     // 顕著性マップ
@@ -95,6 +94,8 @@ private:
     enum Use use;
     
     cv::Mat frame;
+    cv::Mat downFrame;
+    
     HogTool hog;
     
     // 顔の範囲

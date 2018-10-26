@@ -27,12 +27,14 @@ public:
 
     struct Face {
         ofPoint center;
-        float width, height;
+        float width = 0.0;
+        float height = 0.0;
     };
 
     struct SaliencyRange {
         ofPoint center;
-        float width, height;
+        float width = 0.0;
+        float height = 0.0;
     };
     
     cv::Rect dlibRectangleToOpenCV(dlib::rectangle r) {
