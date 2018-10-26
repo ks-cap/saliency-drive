@@ -57,12 +57,12 @@ private:
     
     // 最小と最大の要素値とそれらの位置
 //    SaliencyTool::MinMax minMax;
-    std::vector<int> pixels;
+    std::vector<int> pixelsList;
 
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
     // 顕著性マップ
-    cv::Mat saliencyMap, saliencyMap_norm, saliencyMap_conv, saliencyMap_color;
+    cv::Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap, saliencyMap_color;
     // マスク処理
     cv::Mat mask;
     // 顕著性マップ + マスク処理
