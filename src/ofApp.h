@@ -27,10 +27,11 @@ public:
 private:
     
     cv::Mat saliencyAlgorithm(cv::Mat mat);
-    
     bool saliencyCheck(bool checkUI);
     void algorithmMinPixels(bool checkPixels);
+    void hogGetRect();
     void saliencyMask();
+
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
