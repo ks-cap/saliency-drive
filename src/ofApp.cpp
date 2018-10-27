@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-// UIの位置を変更する画素値の条件（0:顕著性が高い, 255:顕著性が低い）
+// UIの位置を変更する画素値の条件（白い箇所:顕著性が高い:255, 黒い箇所:顕著性が低い:0）
 #define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
 #define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
 
@@ -95,12 +95,12 @@ void ofApp::update(){
         algorithmMinPixels(algorithmCheck);
 
         // 画素値の反転（現状 : 0:黒:顕著性が低い, 255:白:顕著性が高い）
-        for(int y = 0; y < result.cols; ++y){
-            for(int x = 0; x < result.rows; ++x){
-                result.at<uchar>( x, y ) = 255 - (int)result.at<uchar>(x, y);
-                //        ofLog()<<"(int)saliencyMap.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap.at<uchar>( x, y );
-            }
-        }
+//        for(int y = 0; y < result.cols; ++y){
+//            for(int x = 0; x < result.rows; ++x){
+//                result.at<uchar>( x, y ) = 255 - (int)result.at<uchar>(x, y);
+//                //        ofLog()<<"(int)saliencyMap.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap.at<uchar>( x, y );
+//            }
+//        }
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
@@ -155,7 +155,11 @@ void ofApp::draw(){
     }
 
     // UI画像
-    if (imgDraw){ outputOfImg.draw(minPlace.widthMin, minPlace.heightMin); }
+    if (imgDraw){
+        //        paste(saliencyMap_color, image, minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT);
+//        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
+
+    }
     if (mapDraw){ player_map.draw(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
     // データの初期化
@@ -164,6 +168,8 @@ void ofApp::draw(){
     if(!saliencyRect.empty()) { saliencyRect.clear(); }
 
 }
+
+//--------------------------------------------------------------
 
 //--------------------------------------------------------------
 cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
@@ -237,12 +243,15 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                         pixel += (int)result_roi.at<uchar>(x, y);
                     }
                 }
+
                 // 最小値の値とその場所を更新
-                if ((heightCount == 0 && widthCount == 0) || pixel < minPixels) {
-                    minPixels = pixel;
-                    minPlace.widthMin = width;
-                    minPlace.heightMin = height;
-                    ofLogNotice()<<"pixelsMin["<<width<<", "<<height<<"]: "<<minPixels;
+                if ((heightCount == 0 && widthCount == 0) || pixel > minPixels) {
+                    if (pixel != 0) {
+                        minPixels = pixel;
+                        minPlace.widthMin = width;
+                        minPlace.heightMin = height;
+                        ofLogNotice()<<"pixelsMin["<<width<<", "<<height<<"]: "<<minPixels;
+                    }
                 }
 
                 ofLogNotice()<<"pixels["<<width<<", "<<height<<"]: "<<pixel;
@@ -252,6 +261,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
             }
             height += result.rows / HEIGHTCOUNT;
         }
+
     }
 
 }
@@ -307,10 +317,11 @@ void ofApp::saliencyMask(){
     ofLog()<<"mask.channels: "<< mask.channels();
 
     for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-        cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
+        cv::rectangle(mask, saliencyRect[i], cv::Scalar::all(255), -1, CV_8UC3);
     }
 
     saliencyMap.copyTo(result, mask.clone());
+
 }
 
 //--------------------------------------------------------------
