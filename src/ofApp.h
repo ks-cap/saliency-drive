@@ -80,9 +80,8 @@ private:
     bool imgDraw, mapDraw;
     
     enum Consts::Use use;
-    
-    cv::Mat frame;
-    cv::Mat downFrame;
+    // 顔の矩形出力Mat
+    cv::Mat hogFrame;
     
     HogTool hog;
     

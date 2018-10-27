@@ -16,8 +16,8 @@ void ofApp::setup(){
     ofBackground(255, 255, 255);
 
     // 10*10の顕著マップの最小値の場所
-    minPlace.widthMin = 0;
-    minPlace.heightMin = 0;
+//    minPlace.widthMin = 0;
+//    minPlace.heightMin = 0;
 
     // 1回目と判定
     firstFrameCheck = true;
@@ -61,16 +61,17 @@ void ofApp::update(){
     if (mapDraw) { player_map.update(); }
 
     if(player.isFrameNew()){
+        cv::Mat frame;
         // Mat変換
         frame = ofxCv::toCv(player).clone();
         // 画質を半分に下げる
-        cv::pyrDown(frame.clone(), downFrame);
+        cv::pyrDown(frame.clone(), hogFrame);
 
-        hogData = hog.multiUpdate(downFrame);
+        hogData = hog.multiUpdate(hogFrame);
         // 顔認識
         hogGetRect();
         // 顕著性マップ作成
-        saliencyAlgorithm(downFrame);
+        saliencyAlgorithm(hogFrame);
 
         //---------------------   Camera   -----------------------------
         //          vidGrabber.update();
@@ -131,7 +132,7 @@ void ofApp::draw(){
         case Consts::debug:
             player.draw(0, 0, ofGetWidth()/3, ofGetHeight()/2);
             // 顔検知出力(Hog)
-            ofxCv::drawMat(downFrame, ofGetWidth()/3, 0, ofGetWidth()/3, ofGetHeight()/2);
+            ofxCv::drawMat(hogFrame, ofGetWidth()/3, 0, ofGetWidth()/3, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap, ofGetWidth()-ofGetWidth()/3, 0, ofGetWidth()/3, ofGetHeight()/2);
             // 顔の矩形以外マスク処理
@@ -258,7 +259,7 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::hogGetRect(){
     for (auto data : hogData) {
-        cv::rectangle(downFrame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
+        cv::rectangle(hogFrame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
         cv::Rect rect = data.rect;
         ofLog()<<"rect"<<"["<<data.id<<"].x: "<< rect.x;
         ofLog()<<"rect"<<"["<<data.id<<"].y: "<< rect.y;
@@ -287,7 +288,7 @@ void ofApp::hogGetRect(){
         _s.width = saliencyRange[data.id].width;
         saliencyRect.push_back(_s);
 
-        cv::rectangle(downFrame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
+        cv::rectangle(hogFrame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
 
         ofLog()<<"saliencyRect"<<"["<<data.id<<"].x: "<< saliencyRect[data.id].x;
         ofLog()<<"saliencyRect"<<"["<<data.id<<"].y: "<< saliencyRect[data.id].y;
@@ -300,7 +301,6 @@ void ofApp::hogGetRect(){
 void ofApp::saliencyMask(){
     // saliency適応範囲以外をマスク
     result = cv::Mat();
-//    mask = cv::Mat::ones(saliencyMap.rows, saliencyMap.cols, CV_8UC1);
     mask = cv::Mat::zeros(saliencyMap.rows, saliencyMap.cols, CV_8UC1);
 
     ofLog()<<"saliencyMap.channels: "<< saliencyMap.channels();
@@ -308,7 +308,6 @@ void ofApp::saliencyMask(){
 
     for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
         cv::rectangle(mask, saliencyRect[i], cv::Scalar(255, 255, 255), -1, CV_8UC3);
-//        cv::rectangle(mask, saliencyRect[i], cv::Scalar(0, 0, 0), -1, CV_8UC3);
     }
 
     saliencyMap.copyTo(result, mask.clone());

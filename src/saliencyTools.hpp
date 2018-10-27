@@ -20,8 +20,8 @@ public:
 //    };
     // 最小の位置
     struct MinPlace {
-        int widthMin = 0;
-        int heightMin = 0;
+        int widthMin;
+        int heightMin;
     };
 
 };
