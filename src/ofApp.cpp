@@ -14,18 +14,12 @@ void ofApp::setup(){
 
     // 背景色: White
     ofBackground(255, 255, 255);
-
-    // 10*10の顕著マップの最小値の場所
-//    minPlace.widthMin = 0;
-//    minPlace.heightMin = 0;
-
     // 1回目と判定
     firstFrameCheck = true;
     // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさない
     algorithmCheck = true;
     // 表示しているUIが画像か動画（地図）か
     imgDraw = false;
-    mapDraw = false;
 
     // 動画の読み込み
     ofSetVerticalSync(true);
@@ -55,13 +49,23 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+
+    //---------------------   Camera   -----------------------------
+    //          vidGrabber.update();
+    //
+    //          if( vidGrabber.isFrameNew() ){
+    //            ofPixels & pixels = vidGrabber.getPixels();
+
+    //            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
+    //--------------------------------------------------------------
+
+
     // 動画の場合
     player.update();
 
-    if (mapDraw) { player_map.update(); }
+//    if (mapDraw) { player_map.update(); }
 
     if(player.isFrameNew()){
-        cv::Mat frame;
         // Mat変換
         frame = ofxCv::toCv(player).clone();
         // 画質を半分に下げる
@@ -72,15 +76,6 @@ void ofApp::update(){
         hogGetRect();
         // 顕著性マップ作成
         saliencyAlgorithm(hogFrame);
-
-        //---------------------   Camera   -----------------------------
-        //          vidGrabber.update();
-        //
-        //          if( vidGrabber.isFrameNew() ){
-        //            ofPixels & pixels = vidGrabber.getPixels();
-
-        //            saliencyAlgorithm( ofxCv::toCv( pixels ).clone() );
-        //--------------------------------------------------------------
 
         // 最小と最大の要素値とそれらの位置を求める
         //        minMaxLoc(saliencyMap, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
@@ -156,11 +151,9 @@ void ofApp::draw(){
 
     // UI画像
     if (imgDraw){
-        //        paste(saliencyMap_color, image, minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT);
-//        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
+        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
 
     }
-    if (mapDraw){ player_map.draw(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/5, ofGetHeight()/5); }
 
     // データの初期化
     if(!face.empty()) { face.clear(); }
@@ -362,8 +355,8 @@ void ofApp::keyPressed(int key){
             break;
             // "6"を押した時: マップ表示
         case 54:
-            player_map.load("movie_map.mov");
-            file = Consts::mov;
+//            player_map.load("movie_map.mov");
+//            file = Consts::mov;
             break;
             // "7"を押した時 道路の標識（速度制限）表示: 半透明
         case 55:
@@ -419,23 +412,19 @@ void ofApp::keyPressed(int key){
     switch (file) {
         case Consts::png:
             imgDraw = true;
-            mapDraw = false;
             break;
         case Consts::mov:
             imgDraw = false;
-            mapDraw = true;
             break;
         case Consts::mp4:
             imgDraw = false;
-            mapDraw = false;
             break;
         case Consts::none:
             imgDraw = false;
-            mapDraw = false;
             break;
     }
 
-    if ( imgDraw ) {
+    if (imgDraw) {
         inputOfImg.update();
         image = ofxCv::toCv( inputOfImg );
         // ウインドウのサイズに合わせ10×10にリサイズ
@@ -444,11 +433,6 @@ void ofApp::keyPressed(int key){
         outputOfImg.update();
     }
 
-    if( mapDraw ){
-        player_map.play();
-    }else {
-        player_map.stop();
-    }
 }
 
 //--------------------------------------------------------------

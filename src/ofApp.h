@@ -31,7 +31,7 @@ private:
     void algorithmMinPixels(bool checkPixels);
     void hogGetRect();
     void saliencyMask();
-
+    
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -50,18 +50,19 @@ private:
     cv::Mat image;
     // 動画
     ofVideoPlayer player;
-    ofVideoPlayer player_map;
     // カメラ
     ofVideoGrabber vidGrabber;
     ofPixels videoInverted;
     int camWidth, camHeight;
     
     // 最小と最大の要素値とそれらの位置
-//    SaliencyTool::MinMax minMax;
+    //    SaliencyTool::MinMax minMax;
     std::vector<int> pixelsList;
 
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）
     ofImage outputOfImg_SPECTRAL_RESIDUAL, outputOfImg;
+    
+    cv::Mat frame;
     // 顕著性マップ
     cv::Mat saliencyMap_SPECTRAL_RESIDUAL, saliencyMap, saliencyMap_color;
     // マスク処理
@@ -77,8 +78,8 @@ private:
     bool algorithmCheck;
     
     // どちらを描画するか：画像（Picture）か動画（Map）か
-    bool imgDraw, mapDraw;
-    
+    bool imgDraw;
+
     enum Consts::Use use;
     // 顔の矩形出力Mat
     cv::Mat hogFrame;
@@ -94,17 +95,20 @@ private:
     
     std::vector<HogTool::FHogData> hogData;
     
-    
-    //    struct fileName {
-    //        string circle = "circle.png";
-    //        string roadSign_speed = "roadSign_speed.png";
-    //        string roadSign_stop = "roadSign_stop.png";
-    //        string icon_mail = "icon_mail.png";
-    //        string string_picture = "string.png";
-    //        string map = "movie_map.mov";
-    //        string driver_daytime = "driver_daytime.mp4";
-    //        string driver_night = "driver_night.mp4";
-    //        string driver_daytime_long = "昼のドライブ映像.mp4";
-    //        string driver_night_long = "夜のドライブ映像.mp4";
-    //    };
+//    struct FileName {
+//        static const std::string circle = "circle.png";
+//        static const std::string roadSign_speed = "roadSign_speed.png";
+//        static const std::string roadSign_stop = "roadSign_stop.png";
+//        static const std::string icon_mail = "icon_mail.png";
+//        static const std::string string_picture = "string.png";
+//        static const std::string map = "movie_map.mov";
+//        static const std::string driver_daytime = "driver_daytime.mp4";
+//        static const std::string driver_night = "driver_night.mp4";
+//        static const std::string driver_daytime_long = "昼のドライブ映像.mp4";
+//        static const std::string driver_night_long = "夜のドライブ映像.mp4";
+//        static const std::string sampleMovie = "sampleMovie.mov";
+//    };
+
+    FileName fileName;
+
 };
