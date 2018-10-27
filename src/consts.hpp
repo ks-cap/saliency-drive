@@ -13,13 +13,6 @@
 
 class Consts {
 public:
-    // ファイルの拡張子
-    enum File {
-        png,
-        mov,
-        mp4,
-        none
-    };
 
     // 環境指定
     enum Use {

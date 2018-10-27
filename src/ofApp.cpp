@@ -63,7 +63,14 @@ void ofApp::update(){
     // 動画の場合
     player.update();
 
-//    if (mapDraw) { player_map.update(); }
+    if (imgDraw) {
+        inputOfImg.update();
+        image = ofxCv::toCv( inputOfImg );
+        // ウインドウのサイズに合わせ10×10にリサイズ
+        resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
+        ofxCv::toOf(image, outputOfImg);
+        outputOfImg.update();
+    }
 
     if(player.isFrameNew()){
         // Mat変換
@@ -84,18 +91,18 @@ void ofApp::update(){
         // マスク処理
         saliencyMask();
         // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
-//        saliencyCheck(firstFrameCheck);
+        //        saliencyCheck(firstFrameCheck);
 
         // 5*3のうちの画素最小値の場所を取得
         algorithmMinPixels(algorithmCheck);
 
         // 画素値の反転（現状 : 0:黒:顕著性が低い, 255:白:顕著性が高い）
-//        for(int y = 0; y < result.cols; ++y){
-//            for(int x = 0; x < result.rows; ++x){
-//                result.at<uchar>( x, y ) = 255 - (int)result.at<uchar>(x, y);
-//                //        ofLog()<<"(int)saliencyMap.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap.at<uchar>( x, y );
-//            }
-//        }
+        //        for(int y = 0; y < result.cols; ++y){
+        //            for(int x = 0; x < result.rows; ++x){
+        //                result.at<uchar>( x, y ) = 255 - (int)result.at<uchar>(x, y);
+        //                //        ofLog()<<"(int)saliencyMap.at<uchar>("<<x<<","<<y<< ") : "<<(int)saliencyMap.at<uchar>( x, y );
+        //            }
+        //        }
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
         applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
@@ -152,7 +159,6 @@ void ofApp::draw(){
     // UI画像
     if (imgDraw){
         outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
-
     }
 
     // データの初期化
@@ -203,7 +209,7 @@ bool ofApp::saliencyCheck(bool checkUI){
             }
         }
         // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
-        int saliency = imgDraw ? SALIENCY_IMG : SALIENCY_MAP;
+        int saliency = SALIENCY_IMG;
         algorithmCheck = pixels < saliency ? false : true ;
 
     } else {
@@ -323,63 +329,18 @@ void ofApp::keyPressed(int key){
     printf("keyPressed: %d\n", key);
     // 条件を発火させ, ボタンを押した直後は saliencyCheck 関数に入らないようにしている
     firstFrameCheck = true;
-
-    enum Consts::File file;
     
     switch (key) {
             //-------------   UI   ------------------
             // "1"を押した時 単純形状表示
         case 49:
-            inputOfImg.load("circle.png");
-            file = Consts::png;
-            break;
-            // "2"を押した時 道路の標識（速度制限）表示
-        case 50:
-            inputOfImg.load("roadSign_speed.png");
-            file = Consts::png;
-            break;
-            // "3"を押した時 道路の標識（停止）表示
-        case 51:
-            inputOfImg.load("roadSign_stop.png");
-            file = Consts::png;
-            break;
-            // "4"を押した時: メールのアイコン表示
-        case 52:
-            inputOfImg.load("icon_mail.png");
-            file = Consts::png;
-            break;
-            // "5"を押した時: マップ表示
-        case 53:
-            inputOfImg.load("string.png");
-            file = Consts::png;
-            break;
-            // "6"を押した時: マップ表示
-        case 54:
-//            player_map.load("movie_map.mov");
-//            file = Consts::mov;
-            break;
-            // "7"を押した時 道路の標識（速度制限）表示: 半透明
-        case 55:
             inputOfImg.load("roadSign_speed2.png");
-            file = Consts::png;
+            imgDraw = true;
             break;
             //-------------   動画データ   ------------------
             // "A"を押した時: 昼のドライブ映像
         case 97:
-            player.load("driver_daytime.mp4");
-            file = Consts::mp4;
-            player.play();
-            break;
-            // "S"を押した時: 夜のドライブ映像
-        case 115:
-            player.load("driver_night.mp4");
-            file = Consts::mp4;
-            player.play();
-            break;
-            // "D"を押した時: サンプル映像
-        case 100:
             player.load("sampleMovie.mov");
-            file = Consts::mp4;
             player.play();
             break;
 
@@ -398,39 +359,11 @@ void ofApp::keyPressed(int key){
             break;
 
             //-------------------------------
-            // "-"を押した時: 終了
-        case 59:
-            file = Consts::none;
-            player.stop();
-            break;
             // 上記以外のボタンを押した時
         default:
-            file = Consts::none;
-            break;
-    }
-
-    switch (file) {
-        case Consts::png:
-            imgDraw = true;
-            break;
-        case Consts::mov:
             imgDraw = false;
+            player.stop();
             break;
-        case Consts::mp4:
-            imgDraw = false;
-            break;
-        case Consts::none:
-            imgDraw = false;
-            break;
-    }
-
-    if (imgDraw) {
-        inputOfImg.update();
-        image = ofxCv::toCv( inputOfImg );
-        // ウインドウのサイズに合わせ10×10にリサイズ
-        resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
-        ofxCv::toOf(image, outputOfImg);
-        outputOfImg.update();
     }
 
 }

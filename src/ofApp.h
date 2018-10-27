@@ -109,6 +109,6 @@ private:
 //        static const std::string sampleMovie = "sampleMovie.mov";
 //    };
 
-    FileName fileName;
+//    FileName fileName;
 
 };
