@@ -57,7 +57,7 @@ private:
     int camWidth, camHeight;
     
     // 最小と最大の要素値とそれらの位置
-    //    SaliencyTool::MinMax minMax;
+    SaliencyTool::MinMax minMax;
     std::vector<int> pixelsList;
 
     // 出力データ（SPECTRAL_RESIDUAL, UI(画像)）

@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 // UIの位置を変更する画素値の条件（白い箇所:顕著性が高い:255, 黒い箇所:顕著性が低い:0）
-#define SALIENCY_IMG 826200   // 12960回 * 63.75(255/4)
+#define SALIENCY_IMG 550800   // 12960回(フレームの分割によって変動) * 42.5(255/6)
 
 // 顔矩形の係数
 #define FACE_RANGE 1.2
@@ -78,9 +78,7 @@ void ofApp::update(){
         saliencyAlgorithm(hogFrame);
 
         // 最小と最大の要素値とそれらの位置を求める
-        //        minMaxLoc(saliencyMap, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
-        //        ofLog()<<"minMaxLoc.min_val: "<<minMax.min_val;
-        //        ofLog()<<"minMaxLoc.min_loc: "<<minMax.min_loc;
+        minMaxLoc(saliencyMap, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
 
         // マスク処理
         saliencyMask();
@@ -335,10 +333,6 @@ void ofApp::saliencyMask(){
     mask_ones = cv::Mat::ones(saliencyMap.rows, saliencyMap.cols, CV_8UC1)*255;
     // 顔の矩形（黒）
     for (int m = 0; m < (int)face.size(); m++) {
-        ofLog()<<"face"<<"["<<m<<"].x: "<< face[m].x;
-        ofLog()<<"face"<<"["<<m<<"].y: "<< face[m].y;
-        ofLog()<<"face"<<"["<<m<<"].width: "<< face[m].width;
-        ofLog()<<"face"<<"["<<m<<"].height: "<< face[m].height;
         cv::rectangle(mask_ones, cv::Rect((int)face[m].x, (int)face[m].y, (int)face[m].width, (int)face[m].height), cv::Scalar::all(0), -1, CV_8UC3);
     }
     mask_zero.copyTo(mask, mask_ones.clone());
@@ -360,8 +354,8 @@ void ofApp::keyPressed(int key){
             inputOfImg.load("roadSign.png");
             inputOfImg.update();
             image = ofxCv::toCv(inputOfImg);
-            // ウインドウのサイズに合わせ10×10にリサイズ: UI画像を上に再描画する場合のみ
-            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
+            // ウインドウのサイズに合わせ, WIDTHCOUNT×HEIGHTCOUNT にリサイズ: UI画像を上に再描画する場合のみ
+            cv::resize(image.clone(), image, cv::Size(), double(ofGetWidth()/WIDTHCOUNT)/image.cols, double(ofGetHeight()/HEIGHTCOUNT)/image.rows);
             imgDraw = true;
             break;
             //-------------   動画データ   ------------------
