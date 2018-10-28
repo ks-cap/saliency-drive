@@ -343,8 +343,8 @@ void ofApp::keyPressed(int key){
             inputOfImg.load("roadSign.png");
             inputOfImg.update();
             image = ofxCv::toCv(inputOfImg);
-            // ウインドウのサイズに合わせ10×10にリサイズ
-            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
+            // ウインドウのサイズに合わせ10×10にリサイズ: UI画像を上に再描画する場合のみ
+//            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
             imgDraw = true;
             break;
             //-------------   動画データ   ------------------
