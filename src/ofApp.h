@@ -70,7 +70,7 @@ private:
     cv::Mat mask;
     // 顕著性マップ + マスク処理
     cv::Mat result;
-
+    
     cv::Mat frame_copy;
     
     // 10*10の顕著マップの最小値の場所

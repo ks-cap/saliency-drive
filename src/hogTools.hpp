@@ -27,8 +27,8 @@ public:
 
     struct Face {
         ofPoint center;
-        float width;
-        float height;
+        float x, y;
+        float width, height;
     };
 
     struct SaliencyRange {

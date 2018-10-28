@@ -1,13 +1,15 @@
 #include "ofApp.h"
 
 // UIの位置を変更する画素値の条件（白い箇所:顕著性が高い:255, 黒い箇所:顕著性が低い:0）
-#define SALIENCY_IMG 391680   // 9216回 * 42.5(255/6)
-#define SALIENCY_MAP 1566720  // 36864回 * 42.5(255/6)
+#define SALIENCY_IMG 826200   // 12960回 * 63.75(255/4)
 
-#define SALIENCY_RANGE 2.5
+// 顔矩形の係数
+#define FACE_RANGE 1.2
+#define SALIENCY_RANGE 2
 
-#define WIDTHCOUNT 5
-#define HEIGHTCOUNT 3
+// フレームの分割
+#define WIDTHCOUNT 8
+#define HEIGHTCOUNT 5
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -102,17 +104,17 @@ void ofApp::update(){
         // 前・後景が合成されたMat画像を作成 (後景:元の動画に対して, 前景:UIを貼り付け)
         if (imgDraw == true) {
 //--------------------------------------------------------------
-            CV_Assert((minPlace.widthMin >= 0) && (minPlace.widthMin + ofGetWidth()/WIDTHCOUNT <= saliencyMap.cols));
-            CV_Assert((minPlace.heightMin >= 0) && (minPlace.heightMin + ofGetHeight()/HEIGHTCOUNT <= saliencyMap.rows));
-
-            frame_copy = frame.clone();
-            cv::Mat frame_img = frame_copy(cv::Rect(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT));
-            image.copyTo(frame_img);
+//            CV_Assert((minPlace.widthMin >= 0) && (minPlace.widthMin + ofGetWidth()/WIDTHCOUNT <= saliencyMap.cols));
+//            CV_Assert((minPlace.heightMin >= 0) && (minPlace.heightMin + ofGetHeight()/HEIGHTCOUNT <= saliencyMap.rows));
+//
+//            frame_copy = frame.clone();
+//            cv::Mat frame_img = frame_copy(cv::Rect(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT));
+//            image.copyTo(frame_img);
 //            ofxCv::toOf(frame_copy.clone(), outputOfImg);
 //--------------------------------------------------------------
             // UI画像を上に再描画
-//            ofxCv::toOf(image.clone(), outputOfImg);
-//            outputOfImg.update();
+            ofxCv::toOf(image.clone(), outputOfImg);
+            outputOfImg.update();
 //--------------------------------------------------------------
         }
         ofLog()<<"----------------------------------------------------\n";
@@ -168,9 +170,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
     // UI画像を上に再描画
-//    if (imgDraw){
-//        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
-//    }
+    if (imgDraw){
+        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
+    }
 //--------------------------------------------------------------
     // データの初期化
     if(!face.empty()) { face.clear(); }
@@ -193,32 +195,33 @@ cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
     saliencyAlgorithm->computeSaliency(mat_gaus.clone(), saliencyMap_SPECTRAL_RESIDUAL);
 
     // アルファチャンネルの正規化を行う
-    cv::normalize( saliencyMap_SPECTRAL_RESIDUAL.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX );
+    cv::normalize(saliencyMap_SPECTRAL_RESIDUAL.clone(), saliencyMap_norm, 0.0, 255.0, cv::NORM_MINMAX);
     // Matの型（ビット深度）を変換する
-    saliencyMap_norm.convertTo( saliencyMap, CV_8UC3 );
+    saliencyMap_norm.convertTo(saliencyMap, CV_8UC3);
 
     return saliencyMap;
 }
 
 //--------------------------------------------------------------
 bool ofApp::saliencyCheck(bool checkUI){
-    if ( !checkUI ){
+    if (!checkUI){
         // 今は firstFrameCheck で条件を発火させ, ボタンを押した直後は入らないようにしている
 
         // 前回の顕著性マップで顕著性が低かったピクセルのうちの一つ
         cv::Rect roi(minPlace.widthMin, minPlace.heightMin, saliencyMap.cols / WIDTHCOUNT, saliencyMap.rows / HEIGHTCOUNT);
         cv::Mat saliency_roi = saliencyMap(roi);
         int pixels = 0;
-        // 10*10のうちの一つの画素値(count: 9216回 * 42.5(255/6))
-        // 5*5のうちの一つの画素値(count: 36864回　* 42.5(255/6))
+        // WIDTHCOUNT*HEIGHTCOUNTのうちの一つの画素値(count: 12960回 * 42.5(255/6))
+        int i = 0;
         for(int y = 0; y < saliency_roi.cols; ++y){
             for(int x = 0; x < saliency_roi.rows; ++x){
                 pixels += (int)saliency_roi.at<uchar>(x, y);
+                i++;
             }
         }
+//        ofLogNotice()<<"i :"<<i;
         // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
         algorithmCheck = pixels < SALIENCY_IMG ? false : true ;
-
     } else {
         // 初回のチェックをなくす
         firstFrameCheck = false;
@@ -249,7 +252,6 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                         pixel += (int)result_roi.at<uchar>(x, y);
                     }
                 }
-
                 // 最小値の値とその場所を更新
                 if ((heightCount == 0 && widthCount == 0) || pixel > minPixels) {
                     if (pixel != 0) {
@@ -259,7 +261,6 @@ void ofApp::algorithmMinPixels(bool checkPixels){
                         ofLogNotice()<<"pixelsMin["<<width<<", "<<height<<"]: "<<minPixels;
                     }
                 }
-
                 ofLogNotice()<<"pixels["<<width<<", "<<height<<"]: "<<pixel;
                 pixelsList.push_back(pixel);
 
@@ -274,21 +275,24 @@ void ofApp::algorithmMinPixels(bool checkPixels){
 //--------------------------------------------------------------
 void ofApp::hogGetRect(){
     for (auto data : hogData) {
-        cv::rectangle(hogFrame, data.rect, cv::Scalar(255, 0, 0), 2, CV_AA);
         cv::Rect rect = data.rect;
         ofLog()<<"rect"<<"["<<data.id<<"].x: "<< rect.x;
         ofLog()<<"rect"<<"["<<data.id<<"].y: "<< rect.y;
         ofLog()<<"rect"<<"["<<data.id<<"].width: "<< rect.width;
         ofLog()<<"rect"<<"["<<data.id<<"].height: "<< rect.height;
 
-        // 顔の矩形
         ofRectangle rectangle = ofxCv::toOf(rect);
 
         HogTool::Face f;
-        f.center += rectangle.getCenter();
-        f.width = rectangle.getWidth();
-        f.height = rectangle.getHeight();
+        f.center = rectangle.getCenter();
+        f.x = rectangle.getCenter().x - (rectangle.width * FACE_RANGE / 2);
+        f.y = rectangle.getCenter().y - (rectangle.height * FACE_RANGE / 2);;
+        f.width = rectangle.getWidth() * FACE_RANGE;
+        f.height = rectangle.getHeight() * FACE_RANGE;
         face.push_back(f);
+
+        // 顔の矩形
+        cv::rectangle(hogFrame, cv::Rect(f.x, f.y, f.width, f.height), cv::Scalar(255, 0, 0), 2, CV_AA);
 
         HogTool::SaliencyRange s;
         s.center = face[data.id].center;
@@ -303,6 +307,7 @@ void ofApp::hogGetRect(){
         _s.width = saliencyRange[data.id].width;
         saliencyRect.push_back(_s);
 
+        // 顔周辺の矩形
         cv::rectangle(hogFrame, _s, cv::Scalar(0, 0, 255), 2, CV_AA);
 
         ofLog()<<"saliencyRect"<<"["<<data.id<<"].x: "<< saliencyRect[data.id].x;
@@ -315,18 +320,30 @@ void ofApp::hogGetRect(){
 //--------------------------------------------------------------
 void ofApp::saliencyMask(){
     // saliency適応範囲以外をマスク
+    mask = cv::Mat();
     result = cv::Mat();
-    mask = cv::Mat::zeros(saliencyMap.rows, saliencyMap.cols, CV_8UC1);
 
-    ofLog()<<"saliencyMap.channels: "<< saliencyMap.channels();
-    ofLog()<<"mask.channels: "<< mask.channels();
-
-    for (int i = 0; i < (int)saliencyRect.size(); i++ ) {
-        cv::rectangle(mask, saliencyRect[i], cv::Scalar::all(255), -1, CV_8UC3);
+    cv::Mat mask_zero, mask_ones;
+    // 背景黒
+    mask_zero = cv::Mat::zeros(saliencyMap.rows, saliencyMap.cols, CV_8UC1);
+    // 顔付近の矩形（白）
+    for (int i = 0; i < (int)saliencyRect.size(); i++) {
+        cv::rectangle(mask_zero, saliencyRect[i], cv::Scalar::all(255), -1, CV_8UC3);
     }
 
-    saliencyMap.copyTo(result, mask.clone());
+    // 背景白
+    mask_ones = cv::Mat::ones(saliencyMap.rows, saliencyMap.cols, CV_8UC1)*255;
+    // 顔の矩形（黒）
+    for (int m = 0; m < (int)face.size(); m++) {
+        ofLog()<<"face"<<"["<<m<<"].x: "<< face[m].x;
+        ofLog()<<"face"<<"["<<m<<"].y: "<< face[m].y;
+        ofLog()<<"face"<<"["<<m<<"].width: "<< face[m].width;
+        ofLog()<<"face"<<"["<<m<<"].height: "<< face[m].height;
+        cv::rectangle(mask_ones, cv::Rect((int)face[m].x, (int)face[m].y, (int)face[m].width, (int)face[m].height), cv::Scalar::all(0), -1, CV_8UC3);
+    }
+    mask_zero.copyTo(mask, mask_ones.clone());
 
+    saliencyMap.copyTo(result, mask.clone());
 }
 
 //--------------------------------------------------------------
@@ -344,7 +361,7 @@ void ofApp::keyPressed(int key){
             inputOfImg.update();
             image = ofxCv::toCv(inputOfImg);
             // ウインドウのサイズに合わせ10×10にリサイズ: UI画像を上に再描画する場合のみ
-//            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
+            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
             imgDraw = true;
             break;
             //-------------   動画データ   ------------------
