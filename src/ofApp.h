@@ -7,6 +7,7 @@
 
 #include "saliencySpecializedClasses.hpp"
 
+#include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc.hpp"
@@ -43,7 +44,7 @@ private:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    
+
     // 画像
     ofImage inputOfImg;
     // UI
@@ -80,6 +81,7 @@ private:
     // どちらを描画するか：画像（Picture）か動画（Map）か
     bool imgDraw;
 
+    // 環境設定: release or prerelease or debug
     enum Consts::Use use;
     // 顔の矩形出力Mat
     cv::Mat hogFrame;

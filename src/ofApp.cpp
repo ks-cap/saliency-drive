@@ -63,15 +63,6 @@ void ofApp::update(){
     // 動画の場合
     player.update();
 
-    if (imgDraw) {
-        inputOfImg.update();
-        image = ofxCv::toCv( inputOfImg );
-        // ウインドウのサイズに合わせ10×10にリサイズ
-        resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
-        ofxCv::toOf(image, outputOfImg);
-        outputOfImg.update();
-    }
-
     if(player.isFrameNew()){
         // Mat変換
         frame = ofxCv::toCv(player).clone();
@@ -88,10 +79,11 @@ void ofApp::update(){
         //        minMaxLoc(saliencyMap, &minMax.min_val, &minMax.max_val, &minMax.min_loc, &minMax.max_loc, cv::Mat());
         //        ofLog()<<"minMaxLoc.min_val: "<<minMax.min_val;
         //        ofLog()<<"minMaxLoc.min_loc: "<<minMax.min_loc;
+
         // マスク処理
         saliencyMask();
         // updateが2回目以降もしくはボタンを押されてupdateが2回目以降に呼ばれた場合, if文の中に入る
-        //        saliencyCheck(firstFrameCheck);
+        saliencyCheck(firstFrameCheck);
 
         // 5*3のうちの画素最小値の場所を取得
         algorithmMinPixels(algorithmCheck);
@@ -105,9 +97,25 @@ void ofApp::update(){
         //        }
 
         // 疑似カラー（カラーマップ）変換 :（0:赤:顕著性が高い, 255:青:顕著性が低い）
-        applyColorMap( result.clone(), saliencyMap_color, cv::COLORMAP_JET );
+        applyColorMap(result.clone(), saliencyMap_color, cv::COLORMAP_JET);
 
-        printf("----------------------------------------------------\n");
+        // 前・後景が合成されたMat画像を作成 (後景:元の動画に対して, 前景:UIを貼り付け)
+        if (imgDraw == true) {
+//--------------------------------------------------------------
+//            CV_Assert((minPlace.widthMin >= 0) && (minPlace.widthMin + ofGetWidth()/WIDTHCOUNT <= saliencyMap.cols));
+//            CV_Assert((minPlace.heightMin >= 0) && (minPlace.heightMin + ofGetHeight()/HEIGHTCOUNT <= saliencyMap.rows));
+//
+//            cv::Mat saliency_copy = frame.clone();
+//            cv::Mat roi_img = saliency_copy(cv::Rect(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT));
+//            image.copyTo(roi_img);
+//            ofxCv::toOf(saliency_copy.clone(), outputOfImg);
+//--------------------------------------------------------------
+        ofxCv::toOf(image.clone(), outputOfImg);
+//--------------------------------------------------------------
+            outputOfImg.update();
+        }
+
+        ofLog()<<"----------------------------------------------------\n";
     }
 
 }
@@ -127,8 +135,9 @@ void ofApp::draw(){
             break;
 
         case Consts::preRelease:
-            // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力: Debug用
-            ofxCv::drawMat(saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
+            // Debug用
+            outputOfImg.draw(0, 0, ofGetWidth(),ofGetHeight());
+//            ofxCv::drawMat(saliencyMap, 0, 0, ofGetWidth(),ofGetHeight());
             break;
 
         case Consts::debug:
@@ -156,19 +165,19 @@ void ofApp::draw(){
             break;
     }
 
-    // UI画像
-    if (imgDraw){
-        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
-    }
-
+//--------------------------------------------------------------
+    // UI画像を上に再描画
+            if (imgDraw){
+                outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
+            }
+//--------------------------------------------------------------
     // データの初期化
     if(!face.empty()) { face.clear(); }
     if(!saliencyRange.empty()) { saliencyRange.clear(); }
     if(!saliencyRect.empty()) { saliencyRect.clear(); }
-
+    if(!pixelsList.empty()) { pixelsList.clear(); }
 }
 
-//--------------------------------------------------------------
 
 //--------------------------------------------------------------
 cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
@@ -193,9 +202,7 @@ cv::Mat ofApp::saliencyAlgorithm(cv::Mat mat){
 //--------------------------------------------------------------
 bool ofApp::saliencyCheck(bool checkUI){
     if ( !checkUI ){
-        // 省略記載：（注意）falseだからといってmapDraw = trueとは限らない
         // 今は firstFrameCheck で条件を発火させ, ボタンを押した直後は入らないようにしている
-        //        int count = imgDraw ? 10 : 5;
 
         // 前回の顕著性マップで顕著性が低かったピクセルのうちの一つ
         cv::Rect roi(minPlace.widthMin, minPlace.heightMin, saliencyMap.cols / WIDTHCOUNT, saliencyMap.rows / HEIGHTCOUNT);
@@ -209,8 +216,7 @@ bool ofApp::saliencyCheck(bool checkUI){
             }
         }
         // UIを出した箇所が次のフレームで一定数値以下であればUIを動かさないフラグを設定
-        int saliency = SALIENCY_IMG;
-        algorithmCheck = pixels < saliency ? false : true ;
+        algorithmCheck = pixels < SALIENCY_IMG ? false : true ;
 
     } else {
         // 初回のチェックをなくす
@@ -260,7 +266,6 @@ void ofApp::algorithmMinPixels(bool checkPixels){
             }
             height += result.rows / HEIGHTCOUNT;
         }
-
     }
 
 }
@@ -334,13 +339,18 @@ void ofApp::keyPressed(int key){
             //-------------   UI   ------------------
             // "1"を押した時 単純形状表示
         case 49:
-            inputOfImg.load("roadSign_speed2.png");
+            inputOfImg.load("roadSign.png");
+            inputOfImg.update();
+            image = ofxCv::toCv(inputOfImg);
+            // ウインドウのサイズに合わせ10×10にリサイズ
+            resize(image.clone(), image, cv::Size(), float(ofGetWidth()/WIDTHCOUNT)/image.cols, float(ofGetHeight()/HEIGHTCOUNT)/image.rows);
             imgDraw = true;
             break;
             //-------------   動画データ   ------------------
             // "A"を押した時: 昼のドライブ映像
         case 97:
             player.load("sampleMovie.mov");
+            imgDraw = false;
             player.play();
             break;
 
@@ -351,7 +361,9 @@ void ofApp::keyPressed(int key){
             break;
             // "X"を押した時: preRelease
         case 120:
-            use = Consts::preRelease;
+            if (imgDraw){
+                use = Consts::preRelease;
+            }
             break;
             // "C"を押した時: debug
         case 99:
