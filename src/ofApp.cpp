@@ -102,19 +102,19 @@ void ofApp::update(){
         // 前・後景が合成されたMat画像を作成 (後景:元の動画に対して, 前景:UIを貼り付け)
         if (imgDraw == true) {
 //--------------------------------------------------------------
-//            CV_Assert((minPlace.widthMin >= 0) && (minPlace.widthMin + ofGetWidth()/WIDTHCOUNT <= saliencyMap.cols));
-//            CV_Assert((minPlace.heightMin >= 0) && (minPlace.heightMin + ofGetHeight()/HEIGHTCOUNT <= saliencyMap.rows));
-//
-//            cv::Mat saliency_copy = frame.clone();
-//            cv::Mat roi_img = saliency_copy(cv::Rect(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT));
-//            image.copyTo(roi_img);
-//            ofxCv::toOf(saliency_copy.clone(), outputOfImg);
-//--------------------------------------------------------------
-        ofxCv::toOf(image.clone(), outputOfImg);
-//--------------------------------------------------------------
-            outputOfImg.update();
-        }
+            CV_Assert((minPlace.widthMin >= 0) && (minPlace.widthMin + ofGetWidth()/WIDTHCOUNT <= saliencyMap.cols));
+            CV_Assert((minPlace.heightMin >= 0) && (minPlace.heightMin + ofGetHeight()/HEIGHTCOUNT <= saliencyMap.rows));
 
+            frame_copy = frame.clone();
+            cv::Mat frame_img = frame_copy(cv::Rect(minPlace.widthMin, minPlace.heightMin, ofGetWidth()/WIDTHCOUNT, ofGetHeight()/HEIGHTCOUNT));
+            image.copyTo(frame_img);
+//            ofxCv::toOf(frame_copy.clone(), outputOfImg);
+//--------------------------------------------------------------
+            // UI画像を上に再描画
+//            ofxCv::toOf(image.clone(), outputOfImg);
+//            outputOfImg.update();
+//--------------------------------------------------------------
+        }
         ofLog()<<"----------------------------------------------------\n";
     }
 
@@ -136,8 +136,9 @@ void ofApp::draw(){
 
         case Consts::preRelease:
             // Debug用
-            outputOfImg.draw(0, 0, ofGetWidth(),ofGetHeight());
-//            ofxCv::drawMat(saliencyMap, 0, 0, ofGetWidth(),ofGetHeight());
+//            outputOfImg.draw(0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat(frame_copy, 0, 0, ofGetWidth(),ofGetHeight());
+            ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 1200, 20);
             break;
 
         case Consts::debug:
@@ -167,9 +168,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
     // UI画像を上に再描画
-            if (imgDraw){
-                outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
-            }
+//    if (imgDraw){
+//        outputOfImg.draw(minPlace.widthMin, minPlace.heightMin);
+//    }
 //--------------------------------------------------------------
     // データの初期化
     if(!face.empty()) { face.clear(); }
