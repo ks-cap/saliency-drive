@@ -28,6 +28,7 @@ void ofApp::setup(){
     // Hogのサンプルデータ読み込み
     hog.loadMultiSVM(ofToDataPath("face_detector.svm"));
 
+//    outputOfImg.allocate(ofGetWidth(), ofGetHeight(), GL_RGB);
     //---------------------   Camera   -----------------------------
     // カメラの設定
     //      camWidth = 1280;
@@ -137,7 +138,7 @@ void ofApp::draw(){
         case Consts::preRelease:
             // Debug用
 //            outputOfImg.draw(0, 0, ofGetWidth(),ofGetHeight());
-            ofxCv::drawMat(frame_copy, 0, 0, ofGetWidth(),ofGetHeight());
+            ofxCv::drawMat(saliencyMap_color, 0, 0, ofGetWidth(),ofGetHeight());
             ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 1200, 20);
             break;
 
@@ -147,7 +148,7 @@ void ofApp::draw(){
             ofxCv::drawMat(hogFrame, ofGetWidth()/3, 0, ofGetWidth()/3, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL)を出力
             ofxCv::drawMat(saliencyMap, ofGetWidth()-ofGetWidth()/3, 0, ofGetWidth()/3, ofGetHeight()/2);
-            // 顔の矩形以外マスク処理
+            // 顔周辺の矩形
             ofxCv::drawMat(mask, 0, ofGetHeight()/2, ofGetWidth()/3, ofGetHeight()/2);
             // 顕著性マップ(SPECTRAL_RESIDUAL) + saliency適応範囲を出力
             ofxCv::drawMat(result, ofGetWidth()/3, ofGetHeight()/2, ofGetWidth()/3, ofGetHeight()/2);
